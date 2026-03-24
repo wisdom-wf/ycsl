@@ -218,7 +218,7 @@ export default function MaintenanceDashboard() {
 
         {/* 地图区域 */}
         <div className="flex-1 min-h-0 overflow-hidden rounded-lg border border-accent/10">
-          <MapVisualization monitoringPoints={[]} />
+          <MapVisualization />
         </div>
       </div>
 

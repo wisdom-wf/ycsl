@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ChevronDown, Droplets, Waves, Database } from 'lucide-react';
-import { RESERVOIRS, RESERVOIR_DATA, MONITORING_POINTS, Reservoir } from '@shared/const';
+import { RESERVOIRS, RESERVOIR_DATA, Reservoir } from '@shared/const';
 import ReservoirInfo from './ReservoirInfo';
 import MapVisualization from './MapVisualization';
 import MonitoringCharts from './MonitoringCharts';
@@ -94,7 +94,7 @@ export default function MonitoringDashboard() {
 
         {/* 地图区域 */}
         <div className="flex-1 min-h-0 overflow-hidden rounded-lg border border-accent/10">
-          <MapVisualization monitoringPoints={MONITORING_POINTS} />
+          <MapVisualization />
         </div>
       </div>
 
