@@ -103,10 +103,7 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
                 <stop offset="0%" stopColor="#b8a44c" stopOpacity="0.7" />
                 <stop offset="100%" stopColor="#8a7a3c" stopOpacity="0.3" />
               </linearGradient>
-              <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#00bfff" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#0066cc" stopOpacity="0.2" />
-              </linearGradient>
+
               <filter id="glow">
                 <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
                 <feMerge>
@@ -130,13 +127,6 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
             <line x1="32" y1="18" x2="32" y2="148" stroke="#1a3a52" strokeWidth="0.5" />
             {/* X轴 */}
             <line x1="32" y1="148" x2="310" y2="148" stroke="#1a3a52" strokeWidth="0.5" />
-
-            {/* 水位线 - 浅蓝色区域 */}
-            <polygon 
-              points="32,82 80,82 80,148 32,148" 
-              fill="url(#waterGrad)" 
-            />
-            <line x1="32" y1="82" x2="80" y2="82" stroke="#00bfff" strokeWidth="1" opacity="0.6" />
 
             {/* 大坝梯形 */}
             <polygon 
