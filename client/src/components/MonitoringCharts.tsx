@@ -26,9 +26,9 @@ export default function MonitoringCharts({ reservoirData }: Props) {
   return (
     <div className="space-y-3 h-full flex flex-col">
       {/* 近期降雨过程 */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 flex flex-col">
         <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">近期降雨过程</label>
-        <div className="bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 h-full flex flex-col shadow-lg shadow-accent/10">
+        <div className="flex-1 min-h-0 bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 flex flex-col shadow-lg shadow-accent/10">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={rainfallData}>
               <defs>
@@ -60,9 +60,9 @@ export default function MonitoringCharts({ reservoirData }: Props) {
       </div>
 
       {/* 渗流压力监测 */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 flex flex-col">
         <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">渗流压力监测</label>
-        <div className="bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 h-full flex flex-col shadow-lg shadow-accent/10">
+        <div className="flex-1 min-h-0 bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 flex flex-col shadow-lg shadow-accent/10">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={seepageData}>
               <defs>

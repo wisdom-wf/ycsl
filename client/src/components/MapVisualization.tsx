@@ -6,8 +6,8 @@ interface Props {
 
 export default function MapVisualization({ monitoringPoints }: Props) {
   return (
-    <div className="bg-card border border-border rounded h-full overflow-hidden flex flex-col">
-      <div className="relative flex-1 bg-gradient-to-b from-blue-900/20 to-blue-950/40 flex items-center justify-center">
+    <div className="bg-card border border-border rounded h-full w-full overflow-hidden flex flex-col">
+      <div className="relative flex-1 min-h-0 bg-gradient-to-b from-blue-900/20 to-blue-950/40 flex items-center justify-center">
         {/* SVG地图背景 */}
         <svg
           viewBox="0 0 400 300"

@@ -158,7 +158,7 @@ export default function MaintenanceDashboard() {
             <div className="text-xs text-muted-foreground">万m³</div>
           </div>
         </div>
-        <div className="h-[calc(100%-80px)]">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <MapVisualization monitoringPoints={[]} />
         </div>
       </div>
