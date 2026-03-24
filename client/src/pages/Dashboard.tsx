@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin } from 'lucide-react';
+import { CloudSun, Droplets, MapPin, Clock } from 'lucide-react';
 import MonitoringDashboard from '@/components/MonitoringDashboard';
 import MaintenanceDashboard from '@/components/MaintenanceDashboard';
 
@@ -16,64 +16,94 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
+  const formatDate = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+    const w = weekDays[date.getDay()];
+    return `${y}-${m}-${d} 周${w}`;
+  };
+
+  const formatTime = (date: Date) => {
+    const h = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const s = String(date.getSeconds()).padStart(2, '0');
+    return `${h}:${min}:${s}`;
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       {/* 顶部导航栏 */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <MapPin className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold text-accent">宜川县水利工程运行管理平台</h1>
-          </div>
-          <div className="flex items-center gap-6 text-sm">
-            {/* 左侧天气信息 */}
-            <div className="flex items-center gap-3 bg-gradient-to-r from-accent/20 to-accent/10 px-4 py-2 rounded border border-accent/30">
-              <div>
-                <div className="text-xs text-muted-foreground">最新天气</div>
-                <div className="text-accent font-bold">5.2℃ 晴</div>
-                <div className="text-xs text-muted-foreground">24h降水概率: 10%</div>
+      <header className="border-b border-accent/20 bg-gradient-to-r from-[#0a1628] via-[#0d1f3c] to-[#0a1628] sticky top-0 z-50 flex-shrink-0">
+        <div className="px-4 py-2.5 flex items-center justify-between">
+          {/* 左侧：天气信息 */}
+          <div className="flex items-center gap-4 min-w-[260px]">
+            <div className="flex items-center gap-2 text-xs">
+              <CloudSun className="w-5 h-5 text-yellow-400" />
+              <div className="leading-tight">
+                <div className="text-accent font-bold text-sm">晴 5.2℃</div>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Droplets className="w-3 h-3 text-blue-400" />
+                  <span>24h降水概率: 10%</span>
+                </div>
               </div>
             </div>
-            {/* 右侧时间 */}
-            <div className="text-right text-muted-foreground">
-              <div className="text-sm">{currentTime.toLocaleString('zh-CN')}</div>
+          </div>
+
+          {/* 中间：标题 */}
+          <div className="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+            <div className="relative">
+              <MapPin className="w-6 h-6 text-accent drop-shadow-[0_0_6px_rgba(0,212,255,0.6)]" />
+            </div>
+            <h1 className="text-xl font-bold tracking-wider bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,212,255,0.3)]">
+              宜川县水利工程运行管理平台
+            </h1>
+          </div>
+
+          {/* 右侧：时间 */}
+          <div className="flex items-center gap-2 min-w-[260px] justify-end">
+            <Clock className="w-4 h-4 text-accent/60" />
+            <div className="text-right leading-tight">
+              <div className="text-sm font-mono text-accent tracking-wider">{formatTime(currentTime)}</div>
+              <div className="text-xs text-muted-foreground">{formatDate(currentTime)}</div>
             </div>
           </div>
         </div>
 
         {/* 标签页导航 */}
-        <div className="px-6 border-t border-border flex gap-1">
+        <div className="px-4 flex gap-0.5">
           <button
             onClick={() => setActiveDashboard('monitoring')}
-            className={`px-4 py-3 border-b-2 transition-all duration-300 font-semibold relative ${
+            className={`px-6 py-2 text-sm font-bold tracking-wide transition-all duration-300 relative border-b-2 ${
               activeDashboard === 'monitoring'
-                ? 'border-accent text-accent bg-gradient-to-b from-accent/20 to-transparent'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-accent/50'
+                ? 'border-accent text-accent bg-gradient-to-b from-accent/15 to-transparent'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-accent/5'
             }`}
           >
-            <span className="relative">监测信息</span>
+            监测信息
             {activeDashboard === 'monitoring' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent via-accent to-transparent"></div>
+              <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-transparent via-accent to-transparent" />
             )}
           </button>
           <button
             onClick={() => setActiveDashboard('maintenance')}
-            className={`px-4 py-3 border-b-2 transition-all duration-300 font-semibold relative ${
+            className={`px-6 py-2 text-sm font-bold tracking-wide transition-all duration-300 relative border-b-2 ${
               activeDashboard === 'maintenance'
-                ? 'border-accent text-accent bg-gradient-to-b from-accent/20 to-transparent'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-accent/50'
+                ? 'border-accent text-accent bg-gradient-to-b from-accent/15 to-transparent'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-accent/5'
             }`}
           >
-            <span className="relative">运维信息</span>
+            运维信息
             {activeDashboard === 'maintenance' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent via-accent to-transparent"></div>
+              <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-transparent via-accent to-transparent" />
             )}
           </button>
         </div>
       </header>
 
       {/* 主内容区域 */}
-      <main className="flex-1 overflow-hidden animate-in fade-in duration-300">
+      <main className="flex-1 overflow-hidden">
         {activeDashboard === 'monitoring' && <MonitoringDashboard />}
         {activeDashboard === 'maintenance' && <MaintenanceDashboard />}
       </main>
