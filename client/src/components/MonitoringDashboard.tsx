@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { RESERVOIRS, RESERVOIR_DATA, MONITORING_POINTS, Reservoir } from '@shared/const';
 import ReservoirInfo from './ReservoirInfo';
@@ -8,6 +8,14 @@ import MonitoringCharts from './MonitoringCharts';
 export default function MonitoringDashboard() {
   const [selectedReservoirId, setSelectedReservoirId] = useState('r1');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const selectedReservoir = useMemo(
     () => RESERVOIRS.find((r: Reservoir) => r.id === selectedReservoirId) || RESERVOIRS[0],
@@ -59,21 +67,21 @@ export default function MonitoringDashboard() {
 
       {/* 中列：地图和核心指标（约６０%） */}
       <div className="flex-1 border-r border-border overflow-hidden bg-background p-4 flex flex-col">
-        {/* 顶部核心指标 */}
+        {/* 顶部核心指标 - 空置不显示数据 */}
         <div className="grid grid-cols-3 gap-3 mb-4 flex-shrink-0">
           <div className="bg-card border border-border rounded p-3 text-center">
             <div className="text-xs text-muted-foreground mb-1">24h降雨量</div>
-            <div className="text-2xl font-bold text-accent">{reservoirData.rainfall24h.toFixed(1)}</div>
+            <div className="text-2xl font-bold text-accent">--</div>
             <div className="text-xs text-muted-foreground">mm</div>
           </div>
           <div className="bg-card border border-border rounded p-3 text-center">
             <div className="text-xs text-muted-foreground mb-1">库水位</div>
-            <div className="text-2xl font-bold text-accent">{reservoirData.waterLevel.toFixed(1)}</div>
+            <div className="text-2xl font-bold text-accent">--</div>
             <div className="text-xs text-muted-foreground">m</div>
           </div>
           <div className="bg-card border border-border rounded p-3 text-center">
             <div className="text-xs text-muted-foreground mb-1">蓄水量</div>
-            <div className="text-2xl font-bold text-accent">{reservoirData.storageVolume}</div>
+            <div className="text-2xl font-bold text-accent">--</div>
             <div className="text-xs text-muted-foreground">万m³</div>
           </div>
         </div>
@@ -84,9 +92,9 @@ export default function MonitoringDashboard() {
         </div>
       </div>
 
-      {/* 右列：监测图表（约２０%） */}
-      <div className="w-1/4 border-l border-border overflow-hidden bg-background p-4 flex flex-col">
-        <MonitoringCharts reservoirData={reservoirData} />
+      {/* 右列：图表（约２０%） */}
+      <div className="w-1/4 border-l border-border overflow-y-auto bg-background p-4 flex flex-col space-y-4">
+        <MonitoringCharts reservoirData={reservoirData} currentTime={currentTime} />
       </div>
     </div>
   );

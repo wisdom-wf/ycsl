@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import MonitoringDashboard from '@/components/MonitoringDashboard';
 import MaintenanceDashboard from '@/components/MaintenanceDashboard';
@@ -7,6 +7,14 @@ type DashboardType = 'monitoring' | 'maintenance';
 
 export default function Dashboard() {
   const [activeDashboard, setActiveDashboard] = useState<DashboardType>('monitoring');
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -19,7 +27,7 @@ export default function Dashboard() {
           </div>
           <div className="absolute right-6 flex items-center gap-4 text-sm text-muted-foreground">
             <span>温度: 5.2℃</span>
-            <span>{new Date().toLocaleString('zh-CN')}</span>
+            <span>{currentTime.toLocaleString('zh-CN')}</span>
           </div>
         </div>
 

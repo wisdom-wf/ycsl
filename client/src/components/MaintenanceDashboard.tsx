@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { RESERVOIRS, RESERVOIR_DATA, Reservoir } from '@shared/const';
 import MapVisualization from './MapVisualization';
@@ -8,6 +8,14 @@ export default function MaintenanceDashboard() {
   const [selectedReservoirId, setSelectedReservoirId] = useState('r1');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showWorkOrderModal, setShowWorkOrderModal] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const selectedReservoir = useMemo(
     () => RESERVOIRS.find((r: Reservoir) => r.id === selectedReservoirId) || RESERVOIRS[0],
