@@ -12,12 +12,12 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* 顶部导航栏 */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="px-6 py-4 flex items-center justify-between">
+        <div className="px-6 py-4 flex items-center justify-center relative">
           <div className="flex items-center gap-3">
             <MapPin className="w-6 h-6 text-accent" />
             <h1 className="text-2xl font-bold text-accent">宜川县水利工程运行管理平台</h1>
           </div>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="absolute right-6 flex items-center gap-4 text-sm text-muted-foreground">
             <span>温度: 5.2℃</span>
             <span>{new Date().toLocaleString('zh-CN')}</span>
           </div>

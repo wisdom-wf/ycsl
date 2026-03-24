@@ -37,8 +37,8 @@ export default function MaintenanceDashboard() {
 
   return (
     <div className="h-full flex overflow-hidden">
-      {/* 左列：运维统计（约20%） */}
-      <div className="w-1/5 border-r border-border overflow-y-auto bg-background p-4 space-y-4">
+      {/* 左列：运维统计（约２０%） */}
+      <div className="w-1/4 border-r border-border overflow-y-auto bg-background p-4 space-y-4">
         {/* 水库选择 */}
         <div>
           <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">区县运维信息</label>
@@ -163,8 +163,8 @@ export default function MaintenanceDashboard() {
         </div>
       </div>
 
-      {/* 右列：运维信息和工单按钮（约20%） */}
-      <div className="w-1/5 border-l border-border overflow-y-auto bg-background p-4 flex flex-col">
+       {/* 右列：运维信息和工单按钮（约２2０%） */}
+      <div className="w-1/4 border-l border-border overflow-y-auto bg-background p-4 flex flex-col">
         {/* 运维信息标题 */}
         <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">运维信息</label>
 

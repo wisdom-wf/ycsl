@@ -18,8 +18,8 @@ export default function MonitoringDashboard() {
 
   return (
     <div className="h-full flex overflow-hidden">
-      {/* 左列：基本信息（约20%） */}
-      <div className="w-1/5 border-r border-border overflow-y-auto bg-background p-4 space-y-4">
+      {/* 左列：基本信息（约２０%） */}
+      <div className="w-1/4 border-r border-border overflow-y-auto bg-background p-4 space-y-4">
         {/* 水库选择 */}
         <div>
           <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">基本信息</label>
@@ -57,10 +57,10 @@ export default function MonitoringDashboard() {
         <ReservoirInfo reservoir={selectedReservoir} data={reservoirData} />
       </div>
 
-      {/* 中列：地图和核心指标（约60%） */}
-      <div className="flex-1 border-r border-border overflow-y-auto bg-background p-4 flex flex-col">
+      {/* 中列：地图和核心指标（约６０%） */}
+      <div className="flex-1 border-r border-border overflow-hidden bg-background p-4 flex flex-col">
         {/* 顶部核心指标 */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-3 gap-3 mb-4 flex-shrink-0">
           <div className="bg-card border border-border rounded p-3 text-center">
             <div className="text-xs text-muted-foreground mb-1">24h降雨量</div>
             <div className="text-2xl font-bold text-accent">{reservoirData.rainfall24h.toFixed(1)}</div>
@@ -79,13 +79,13 @@ export default function MonitoringDashboard() {
         </div>
 
         {/* 地图区域 */}
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <MapVisualization monitoringPoints={MONITORING_POINTS} />
         </div>
       </div>
 
-      {/* 右列：监测图表（约20%） */}
-      <div className="w-1/5 border-l border-border overflow-y-auto bg-background p-4">
+      {/* 右列：监测图表（约２０%） */}
+      <div className="w-1/4 border-l border-border overflow-hidden bg-background p-4 flex flex-col">
         <MonitoringCharts reservoirData={reservoirData} />
       </div>
     </div>
