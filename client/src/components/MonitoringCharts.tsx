@@ -74,6 +74,19 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
         </div>
       </div>
 
+      {/* 库水情监测 - 绿色柱状图 */}
+      <div className="flex-1 min-h-0 flex flex-col">
+        <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">
+          库水情监测
+        </label>
+        <div className="flex-1 min-h-0 bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 flex flex-col shadow-lg shadow-accent/10">
+          {/* 无数据显示 */}
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+            暂无数据
+          </div>
+        </div>
+      </div>
+
       {/* 渗透压力监测 - 梯形图 */}
       <div className="flex-1 min-h-0 flex flex-col">
         <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">
