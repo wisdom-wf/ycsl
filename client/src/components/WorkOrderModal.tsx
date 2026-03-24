@@ -55,21 +55,21 @@ export default function WorkOrderModal({ reservoirId, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-card border border-border rounded-lg w-11/12 h-5/6 flex flex-col max-w-6xl">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
+      <div className="bg-card border border-accent/30 rounded-lg w-11/12 h-5/6 flex flex-col max-w-6xl shadow-2xl shadow-accent/20 animate-in scale-in-95 duration-200">
         {/* 标题栏 */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-accent/20 bg-gradient-to-r from-accent/10 to-transparent">
           <h2 className="text-lg font-bold text-accent">查看水库运维工单</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-accent/20 rounded transition-colors"
+            className="p-1 hover:bg-accent/30 rounded transition-all duration-200 hover:scale-110"
           >
             <X className="w-5 h-5 text-foreground" />
           </button>
         </div>
 
         {/* 标签页 */}
-        <div className="flex gap-1 px-6 border-b border-border bg-card/50">
+        <div className="flex gap-1 px-6 border-b border-accent/20 bg-card/50">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -77,13 +77,16 @@ export default function WorkOrderModal({ reservoirId, onClose }: Props) {
                 setActiveTab(tab.id as TabType);
                 setSelectedWorkOrder(null);
               }}
-              className={`px-4 py-3 border-b-2 transition-all text-sm font-semibold ${
+              className={`px-4 py-3 border-b-2 transition-all duration-300 text-sm font-semibold relative ${
                 activeTab === tab.id
-                  ? 'border-accent text-accent'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  ? 'border-accent text-accent bg-accent/10'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-accent/50'
               }`}
             >
               {tab.label}
+              {activeTab === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent via-accent to-transparent"></div>
+              )}
             </button>
           ))}
         </div>
@@ -99,10 +102,10 @@ export default function WorkOrderModal({ reservoirId, onClose }: Props) {
                   <button
                     key={order.id}
                     onClick={() => setSelectedWorkOrder(order)}
-                    className={`w-full p-3 rounded border transition-all text-left text-sm ${
+                    className={`w-full p-3 rounded border transition-all duration-200 text-left text-sm hover:scale-105 origin-left ${
                       selectedWorkOrder?.id === order.id
-                        ? 'border-accent bg-accent/10'
-                        : 'border-border bg-card hover:border-accent/50'
+                        ? 'border-accent bg-gradient-to-r from-accent/20 to-accent/5 shadow-lg shadow-accent/20'
+                        : 'border-border bg-card hover:border-accent/50 hover:shadow-md hover:shadow-accent/10'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -166,14 +169,14 @@ export default function WorkOrderModal({ reservoirId, onClose }: Props) {
                 </div>
 
                 {/* 操作按钮 */}
-                <div className="flex gap-3 pt-4 border-t border-border">
-                  <button className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded font-semibold hover:bg-accent/90 transition-colors text-sm">
+                <div className="flex gap-3 pt-4 border-t border-accent/20">
+                  <button className="flex-1 px-4 py-2 bg-gradient-to-r from-accent to-blue-400 text-accent-foreground rounded font-semibold hover:shadow-lg hover:shadow-accent/40 transition-all duration-200 text-sm hover:scale-105">
                     工单详情
                   </button>
-                  <button className="flex-1 px-4 py-2 border border-accent text-accent rounded font-semibold hover:bg-accent/10 transition-colors text-sm">
+                  <button className="flex-1 px-4 py-2 border border-accent text-accent rounded font-semibold hover:bg-accent/20 transition-all duration-200 text-sm hover:scale-105">
                     处理流程
                   </button>
-                  <button className="flex-1 px-4 py-2 border border-accent text-accent rounded font-semibold hover:bg-accent/10 transition-colors text-sm">
+                  <button className="flex-1 px-4 py-2 border border-accent text-accent rounded font-semibold hover:bg-accent/20 transition-all duration-200 text-sm hover:scale-105">
                     视频监控
                   </button>
                 </div>

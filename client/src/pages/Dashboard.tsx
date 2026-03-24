@@ -27,29 +27,35 @@ export default function Dashboard() {
         <div className="px-6 border-t border-border flex gap-1">
           <button
             onClick={() => setActiveDashboard('monitoring')}
-            className={`px-4 py-3 border-b-2 transition-all font-semibold ${
+            className={`px-4 py-3 border-b-2 transition-all duration-300 font-semibold relative ${
               activeDashboard === 'monitoring'
-                ? 'border-accent text-accent bg-accent/10'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
+                ? 'border-accent text-accent bg-gradient-to-b from-accent/20 to-transparent'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-accent/50'
             }`}
           >
-            监测信息
+            <span className="relative">监测信息</span>
+            {activeDashboard === 'monitoring' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent via-accent to-transparent"></div>
+            )}
           </button>
           <button
             onClick={() => setActiveDashboard('maintenance')}
-            className={`px-4 py-3 border-b-2 transition-all font-semibold ${
+            className={`px-4 py-3 border-b-2 transition-all duration-300 font-semibold relative ${
               activeDashboard === 'maintenance'
-                ? 'border-accent text-accent bg-accent/10'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
+                ? 'border-accent text-accent bg-gradient-to-b from-accent/20 to-transparent'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-accent/50'
             }`}
           >
-            运维信息
+            <span className="relative">运维信息</span>
+            {activeDashboard === 'maintenance' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent via-accent to-transparent"></div>
+            )}
           </button>
         </div>
       </header>
 
       {/* 主内容区域 */}
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden animate-in fade-in duration-300">
         {activeDashboard === 'monitoring' && <MonitoringDashboard />}
         {activeDashboard === 'maintenance' && <MaintenanceDashboard />}
       </main>

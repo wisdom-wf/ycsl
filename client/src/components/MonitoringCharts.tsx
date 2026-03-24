@@ -1,5 +1,5 @@
 import { ReservoirData } from '@shared/const';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Area, AreaChart } from 'recharts';
 
 interface Props {
   reservoirData: ReservoirData;
@@ -27,43 +27,59 @@ export default function MonitoringCharts({ reservoirData }: Props) {
     <div className="space-y-3 h-full flex flex-col">
       {/* 近期降雨过程 */}
       <div className="flex-1 min-h-0">
-        <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">近期降雨过程</label>
-        <div className="bg-card border border-border rounded p-2 h-full flex flex-col">
+        <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">近期降雨过程</label>
+        <div className="bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 h-full flex flex-col shadow-lg shadow-accent/10">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={rainfallData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a3a52" />
+            <AreaChart data={rainfallData}>
+              <defs>
+                <linearGradient id="colorRainfall" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#00d4ff" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#00d4ff" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1a3a52" opacity={0.5} />
               <XAxis dataKey="time" stroke="#8ab4ff" style={{ fontSize: '10px' }} />
               <YAxis stroke="#8ab4ff" style={{ fontSize: '10px' }} />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#0f1d35', border: '1px solid #1a3a52', fontSize: '12px' }}
+                contentStyle={{ backgroundColor: '#0f1d35', border: '2px solid #00d4ff', borderRadius: '4px', fontSize: '12px' }}
                 labelStyle={{ color: '#e0e8ff' }}
+                cursor={{ stroke: '#00d4ff', strokeWidth: 2 }}
               />
-              <Line 
+              <Area 
                 type="monotone" 
                 dataKey="value" 
                 stroke="#00d4ff" 
-                strokeWidth={2}
-                dot={{ fill: '#00d4ff', r: 2 }}
+                strokeWidth={2.5}
+                fill="url(#colorRainfall)"
+                dot={{ fill: '#00d4ff', r: 3, strokeWidth: 2, stroke: '#0a1428' }}
+                activeDot={{ r: 5 }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* 渗流压力监测 */}
       <div className="flex-1 min-h-0">
-        <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">渗流压力监测</label>
-        <div className="bg-card border border-border rounded p-2 h-full flex flex-col">
+        <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">渗流压力监测</label>
+        <div className="bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 h-full flex flex-col shadow-lg shadow-accent/10">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={seepageData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a3a52" />
+              <defs>
+                <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#00d4ff" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#0088ff" stopOpacity={0.6}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1a3a52" opacity={0.5} />
               <XAxis dataKey="name" stroke="#8ab4ff" style={{ fontSize: '10px' }} />
               <YAxis stroke="#8ab4ff" style={{ fontSize: '10px' }} />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#0f1d35', border: '1px solid #1a3a52', fontSize: '12px' }}
+                contentStyle={{ backgroundColor: '#0f1d35', border: '2px solid #00d4ff', borderRadius: '4px', fontSize: '12px' }}
                 labelStyle={{ color: '#e0e8ff' }}
+                cursor={{ fill: 'rgba(0, 212, 255, 0.1)' }}
               />
-              <Bar dataKey="value" fill="#0088ff" />
+              <Bar dataKey="value" fill="url(#colorBar)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -71,24 +87,30 @@ export default function MonitoringCharts({ reservoirData }: Props) {
 
       {/* 水库水情监测 */}
       <div>
-        <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">水库水情监测</label>
-        <div className="bg-card border border-border rounded p-2 space-y-2 text-xs">
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">入流</span>
-            <div className="flex items-center gap-1">
-              <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden max-w-16">
-                <div className="h-full bg-accent" style={{ width: `${(reservoirData.inflow / 2) * 100}%` }}></div>
-              </div>
-              <span className="text-foreground w-10 text-right text-xs">{reservoirData.inflow.toFixed(1)}</span>
+        <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">水库水情监测</label>
+        <div className="bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-3 space-y-3 text-xs shadow-lg shadow-accent/10">
+          <div>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-muted-foreground font-semibold">入流</span>
+              <span className="text-accent font-bold">{reservoirData.inflow.toFixed(1)} m³/s</span>
+            </div>
+            <div className="h-2 bg-secondary rounded-full overflow-hidden border border-accent/30">
+              <div 
+                className="h-full bg-gradient-to-r from-accent to-blue-400 rounded-full transition-all duration-300" 
+                style={{ width: `${Math.min((reservoirData.inflow / 2) * 100, 100)}%` }}
+              ></div>
             </div>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">出流</span>
-            <div className="flex items-center gap-1">
-              <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden max-w-16">
-                <div className="h-full bg-accent" style={{ width: `${(reservoirData.outflow / 2) * 100}%` }}></div>
-              </div>
-              <span className="text-foreground w-10 text-right text-xs">{reservoirData.outflow.toFixed(1)}</span>
+          <div>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-muted-foreground font-semibold">出流</span>
+              <span className="text-accent font-bold">{reservoirData.outflow.toFixed(1)} m³/s</span>
+            </div>
+            <div className="h-2 bg-secondary rounded-full overflow-hidden border border-accent/30">
+              <div 
+                className="h-full bg-gradient-to-r from-blue-400 to-cyan-300 rounded-full transition-all duration-300" 
+                style={{ width: `${Math.min((reservoirData.outflow / 2) * 100, 100)}%` }}
+              ></div>
             </div>
           </div>
         </div>
@@ -96,3 +118,5 @@ export default function MonitoringCharts({ reservoirData }: Props) {
     </div>
   );
 }
+
+

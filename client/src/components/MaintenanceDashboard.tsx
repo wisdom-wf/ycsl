@@ -166,20 +166,23 @@ export default function MaintenanceDashboard() {
       {/* 右列：运维信息和工单按钮（约20%） */}
       <div className="w-1/5 border-l border-border overflow-y-auto bg-background p-4 flex flex-col">
         {/* 运维信息标题 */}
-        <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">运维信息</label>
+        <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">运维信息</label>
 
         {/* 运维统计进度条 */}
-        <div className="bg-card border border-border rounded p-2 mb-3">
-          <div className="text-xs text-muted-foreground mb-2">完成率</div>
-          <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-            <div className="h-full bg-accent" style={{ width: `${maintenanceStats.completionRate}%` }}></div>
+        <div className="bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 mb-3 shadow-lg shadow-accent/10">
+          <div className="text-xs text-muted-foreground mb-2 font-semibold">完成率</div>
+          <div className="w-full h-2.5 bg-secondary rounded-full overflow-hidden border border-accent/30">
+            <div 
+              className="h-full bg-gradient-to-r from-accent to-blue-400 rounded-full transition-all duration-500" 
+              style={{ width: `${maintenanceStats.completionRate}%` }}
+            ></div>
           </div>
-          <div className="text-xs text-accent font-semibold mt-1">{maintenanceStats.completionRate}%</div>
+          <div className="text-xs text-accent font-bold mt-1">{maintenanceStats.completionRate}%</div>
         </div>
 
         {/* 问题险情处理 */}
         <div className="mb-3">
-          <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">问题险情处理</label>
+          <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">问题险情处理</label>
           <div className="bg-card border border-border rounded p-2">
             <ResponsiveContainer width="100%" height={100}>
               <PieChart>
@@ -214,8 +217,8 @@ export default function MaintenanceDashboard() {
 
         {/* 责任人信息 */}
         <div className="mb-3">
-          <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">责任人信息</label>
-          <div className="bg-card border border-border rounded p-2 space-y-1 text-xs">
+          <label className="block text-xs font-bold text-accent mb-2 bg-gradient-to-r from-accent/30 to-accent/10 px-2 py-1 rounded border border-accent/30">责任人信息</label>
+          <div className="bg-gradient-to-br from-card to-card/50 border border-accent/20 rounded p-2 space-y-1 text-xs shadow-lg shadow-accent/10">
             <div>
               <div className="text-muted-foreground">行政责任人</div>
               <div className="text-foreground">{selectedReservoir.contacts.adminName}</div>
@@ -234,7 +237,7 @@ export default function MaintenanceDashboard() {
         {/* 查看工单按钮 */}
         <button
           onClick={() => setShowWorkOrderModal(true)}
-          className="mt-auto px-4 py-2 bg-accent text-accent-foreground rounded font-semibold hover:bg-accent/90 transition-colors text-sm"
+          className="mt-auto px-4 py-2 bg-gradient-to-r from-accent to-blue-400 text-accent-foreground rounded font-semibold hover:shadow-lg hover:shadow-accent/40 transition-all duration-200 text-sm hover:scale-105 active:scale-95"
         >
           查看工单
         </button>
