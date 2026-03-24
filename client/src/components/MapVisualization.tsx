@@ -1,14 +1,54 @@
 export default function MapVisualization() {
   return (
     <div className="h-full w-full overflow-hidden relative bg-[#0a1628]">
-      {/* 旋转背景亮线动画 */}
+      {/* 沿圆圈轨迹流动的亮线动画 */}
       <style>{`
-        @keyframes rotate-slow {
-          from { transform: translate(-50%, -50%) rotate(0deg); }
-          to { transform: translate(-50%, -50%) rotate(360deg); }
+        @keyframes orbit1 {
+          from { stroke-dashoffset: 0; }
+          to { stroke-dashoffset: -1885; }
         }
-        .rotating-lines {
-          animation: rotate-slow 25s linear infinite;
+        @keyframes orbit2 {
+          from { stroke-dashoffset: 0; }
+          to { stroke-dashoffset: 1508; }
+        }
+        @keyframes orbit3 {
+          from { stroke-dashoffset: 0; }
+          to { stroke-dashoffset: -1131; }
+        }
+        @keyframes orbit4 {
+          from { stroke-dashoffset: 0; }
+          to { stroke-dashoffset: 754; }
+        }
+        .orbit-line-1 {
+          stroke-dasharray: 120 1765;
+          animation: orbit1 12s linear infinite;
+        }
+        .orbit-line-2 {
+          stroke-dasharray: 100 1408;
+          animation: orbit2 10s linear infinite;
+        }
+        .orbit-line-3 {
+          stroke-dasharray: 80 1051;
+          animation: orbit3 8s linear infinite;
+        }
+        .orbit-line-4 {
+          stroke-dasharray: 50 704;
+          animation: orbit4 6s linear infinite;
+        }
+        .orbit-line-1b {
+          stroke-dasharray: 80 1805;
+          animation: orbit1 15s linear infinite;
+          animation-delay: -6s;
+        }
+        .orbit-line-2b {
+          stroke-dasharray: 60 1448;
+          animation: orbit2 13s linear infinite;
+          animation-delay: -5s;
+        }
+        .orbit-line-3b {
+          stroke-dasharray: 50 1081;
+          animation: orbit3 11s linear infinite;
+          animation-delay: -4s;
         }
       `}</style>
 
@@ -20,49 +60,54 @@ export default function MapVisualization() {
         style={{ filter: 'brightness(1.05) contrast(1.05)', zIndex: 1 }}
       />
       
-      {/* 旋转亮线层 - 覆盖在地图上方，1px宽度 */}
+      {/* 沿同心圆轨迹流动的亮线 - 覆盖在地图上方 */}
       <svg
-        className="absolute rotating-lines"
-        style={{ left: '50%', top: '50%', width: '160%', height: '160%', pointerEvents: 'none', zIndex: 2, opacity: 0.35 }}
-        viewBox="0 0 400 400"
-        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 w-full h-full"
+        style={{ pointerEvents: 'none', zIndex: 2 }}
+        viewBox="0 0 600 600"
+        preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          <linearGradient id="lineGradH" x1="0%" y1="0%" x2="100%" y2="0%">
+          {/* 流动亮线渐变 - 主亮线 */}
+          <linearGradient id="flowGrad1" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="600" y2="300">
             <stop offset="0%" stopColor="#00d4ff" stopOpacity="0" />
-            <stop offset="30%" stopColor="#00d4ff" stopOpacity="0.4" />
-            <stop offset="50%" stopColor="#00eaff" stopOpacity="0.9" />
-            <stop offset="70%" stopColor="#00d4ff" stopOpacity="0.4" />
+            <stop offset="40%" stopColor="#00eaff" stopOpacity="0.7" />
+            <stop offset="50%" stopColor="#66ffff" stopOpacity="1" />
+            <stop offset="60%" stopColor="#00eaff" stopOpacity="0.7" />
             <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
           </linearGradient>
-          <linearGradient id="lineGradV" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#00d4ff" stopOpacity="0" />
-            <stop offset="30%" stopColor="#00d4ff" stopOpacity="0.4" />
-            <stop offset="50%" stopColor="#00eaff" stopOpacity="0.9" />
-            <stop offset="70%" stopColor="#00d4ff" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
+          {/* 流动亮线渐变 - 副亮线 */}
+          <linearGradient id="flowGrad2" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="600" y2="300">
+            <stop offset="0%" stopColor="#0088cc" stopOpacity="0" />
+            <stop offset="40%" stopColor="#00aadd" stopOpacity="0.4" />
+            <stop offset="50%" stopColor="#00ccff" stopOpacity="0.7" />
+            <stop offset="60%" stopColor="#00aadd" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#0088cc" stopOpacity="0" />
           </linearGradient>
-          <linearGradient id="lineGradD1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00d4ff" stopOpacity="0" />
-            <stop offset="30%" stopColor="#00d4ff" stopOpacity="0.3" />
-            <stop offset="50%" stopColor="#00eaff" stopOpacity="0.7" />
-            <stop offset="70%" stopColor="#00d4ff" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
-          </linearGradient>
+          {/* 发光滤镜 */}
+          <filter id="orbitGlow">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
-        <g>
-          {/* 主十字线 */}
-          <line x1="200" y1="0" x2="200" y2="400" stroke="url(#lineGradV)" strokeWidth="1" />
-          <line x1="0" y1="200" x2="400" y2="200" stroke="url(#lineGradH)" strokeWidth="1" />
-          {/* 对角线 */}
-          <line x1="40" y1="40" x2="360" y2="360" stroke="url(#lineGradD1)" strokeWidth="1" />
-          <line x1="360" y1="40" x2="40" y2="360" stroke="url(#lineGradD1)" strokeWidth="1" />
-          {/* 辅助斜线 */}
-          <line x1="120" y1="0" x2="280" y2="400" stroke="url(#lineGradV)" strokeWidth="1" />
-          <line x1="280" y1="0" x2="120" y2="400" stroke="url(#lineGradV)" strokeWidth="1" />
-          <line x1="0" y1="120" x2="400" y2="280" stroke="url(#lineGradH)" strokeWidth="1" />
-          <line x1="0" y1="280" x2="400" y2="120" stroke="url(#lineGradH)" strokeWidth="1" />
-        </g>
+
+        {/* 最外圈 r=300 周长≈1885 */}
+        <circle cx="300" cy="300" r="300" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-1" filter="url(#orbitGlow)" />
+        <circle cx="300" cy="300" r="300" fill="none" stroke="url(#flowGrad2)" strokeWidth="1" className="orbit-line-1b" />
+
+        {/* 第二圈 r=240 周长≈1508 */}
+        <circle cx="300" cy="300" r="240" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-2" filter="url(#orbitGlow)" />
+        <circle cx="300" cy="300" r="240" fill="none" stroke="url(#flowGrad2)" strokeWidth="1" className="orbit-line-2b" />
+
+        {/* 第三圈 r=180 周长≈1131 */}
+        <circle cx="300" cy="300" r="180" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-3" filter="url(#orbitGlow)" />
+        <circle cx="300" cy="300" r="180" fill="none" stroke="url(#flowGrad2)" strokeWidth="1" className="orbit-line-3b" />
+
+        {/* 最内圈 r=120 周长≈754 */}
+        <circle cx="300" cy="300" r="120" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-4" filter="url(#orbitGlow)" />
       </svg>
     </div>
   );
