@@ -118,7 +118,7 @@ export default function MaintenanceDashboard() {
               </div>
               <div className="text-center">
                 <div className="text-muted-foreground">完成率</div>
-                <div className="text-accent font-bold">85%</div>
+                <div className="text-accent font-bold">100%</div>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function MaintenanceDashboard() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">处理中</span>
-              <span className="text-accent font-bold">3</span>
+              <span className="text-accent font-bold">0</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">未处理</span>
@@ -252,17 +252,17 @@ export default function MaintenanceDashboard() {
           </label>
           <div className="bg-card border border-border rounded p-3 space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <CircleProgress percentage={85} label="已处理完" />
-              <CircleProgress percentage={15} label="处理中" />
+              <CircleProgress percentage={100} label="已处理完" />
+              <CircleProgress percentage={0} label="处理中" />
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="text-center">
                 <div className="text-muted-foreground">已处理</div>
-                <div className="text-accent font-bold">17</div>
+                <div className="text-accent font-bold">20</div>
               </div>
               <div className="text-center">
                 <div className="text-muted-foreground">处理中</div>
-                <div className="text-accent font-bold">3</div>
+                <div className="text-accent font-bold">0</div>
               </div>
             </div>
           </div>

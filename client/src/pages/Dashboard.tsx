@@ -20,14 +20,24 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* 顶部导航栏 */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="px-6 py-4 flex items-center justify-center relative">
+        <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <MapPin className="w-6 h-6 text-accent" />
             <h1 className="text-2xl font-bold text-accent">宜川县水利工程运行管理平台</h1>
           </div>
-          <div className="absolute right-6 flex items-center gap-4 text-sm text-muted-foreground">
-            <span>温度: 5.2℃</span>
-            <span>{currentTime.toLocaleString('zh-CN')}</span>
+          <div className="flex items-center gap-6 text-sm">
+            {/* 左侧天气信息 */}
+            <div className="flex items-center gap-3 bg-gradient-to-r from-accent/20 to-accent/10 px-4 py-2 rounded border border-accent/30">
+              <div>
+                <div className="text-xs text-muted-foreground">最新天气</div>
+                <div className="text-accent font-bold">5.2℃ 晴</div>
+                <div className="text-xs text-muted-foreground">24h降水概率: 10%</div>
+              </div>
+            </div>
+            {/* 右侧时间 */}
+            <div className="text-right text-muted-foreground">
+              <div className="text-sm">{currentTime.toLocaleString('zh-CN')}</div>
+            </div>
           </div>
         </div>
 
