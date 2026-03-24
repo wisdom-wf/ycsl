@@ -8,11 +8,11 @@ interface Props {
 
 export default function ReservoirInfo({ reservoir, data }: Props) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* 水库特征 */}
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-accent mb-3 pb-2 border-b border-border">水库特征</h3>
-        <div className="space-y-2 text-sm">
+      <div>
+        <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">水库特征</label>
+        <div className="bg-card border border-border rounded p-2 space-y-1 text-xs">
           <div className="flex justify-between">
             <span className="text-muted-foreground">水库规模</span>
             <span className="text-foreground">中型</span>
@@ -41,50 +41,44 @@ export default function ReservoirInfo({ reservoir, data }: Props) {
       </div>
 
       {/* 视频监控 */}
-      <div className="bg-card border border-border rounded-lg p-4 aspect-video flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-            <div className="w-8 h-8 bg-accent rounded-full"></div>
+      <div>
+        <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">视频监控</label>
+        <div className="bg-card border border-border rounded p-4 aspect-video flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <div className="w-6 h-6 bg-accent rounded-full"></div>
+            </div>
+            <p className="text-xs text-muted-foreground">视频监控</p>
           </div>
-          <p className="text-xs text-muted-foreground">视频监控</p>
         </div>
       </div>
 
       {/* 责任人信息 */}
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-accent mb-3 pb-2 border-b border-border">责任人信息</h3>
-        <div className="space-y-2 text-xs">
-          <div className="flex items-start gap-2">
-            <User className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="text-muted-foreground">行政责任人</div>
-              <div className="text-foreground truncate">{reservoir.contacts.adminName}</div>
-              <div className="text-muted-foreground flex items-center gap-1 mt-1">
-                <Phone className="w-3 h-3" />
-                {reservoir.contacts.adminPhone}
-              </div>
+      <div>
+        <label className="block text-xs font-bold text-accent mb-2 bg-accent/20 px-2 py-1 rounded">责任人信息</label>
+        <div className="bg-card border border-border rounded p-2 space-y-2 text-xs">
+          <div>
+            <div className="text-muted-foreground">行政责任人</div>
+            <div className="text-foreground">{reservoir.contacts.adminName}</div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Phone className="w-3 h-3" />
+              {reservoir.contacts.adminPhone}
             </div>
           </div>
-          <div className="flex items-start gap-2">
-            <User className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="text-muted-foreground">技术责任人</div>
-              <div className="text-foreground truncate">{reservoir.contacts.techName}</div>
-              <div className="text-muted-foreground flex items-center gap-1 mt-1">
-                <Phone className="w-3 h-3" />
-                {reservoir.contacts.techPhone}
-              </div>
+          <div>
+            <div className="text-muted-foreground">技术责任人</div>
+            <div className="text-foreground">{reservoir.contacts.techName}</div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Phone className="w-3 h-3" />
+              {reservoir.contacts.techPhone}
             </div>
           </div>
-          <div className="flex items-start gap-2">
-            <User className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="text-muted-foreground">巡查责任人</div>
-              <div className="text-foreground truncate">{reservoir.contacts.inspectionName}</div>
-              <div className="text-muted-foreground flex items-center gap-1 mt-1">
-                <Phone className="w-3 h-3" />
-                {reservoir.contacts.inspectionPhone}
-              </div>
+          <div>
+            <div className="text-muted-foreground">巡查责任人</div>
+            <div className="text-foreground">{reservoir.contacts.inspectionName}</div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Phone className="w-3 h-3" />
+              {reservoir.contacts.inspectionPhone}
             </div>
           </div>
         </div>

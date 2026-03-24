@@ -6,8 +6,8 @@ interface Props {
 
 export default function MapVisualization({ monitoringPoints }: Props) {
   return (
-    <div className="bg-card border border-border rounded-lg p-6 overflow-hidden">
-      <div className="relative w-full h-96 bg-gradient-to-b from-blue-900/20 to-blue-950/40 rounded-lg flex items-center justify-center">
+    <div className="bg-card border border-border rounded h-full overflow-hidden flex flex-col">
+      <div className="relative flex-1 bg-gradient-to-b from-blue-900/20 to-blue-950/40 flex items-center justify-center">
         {/* SVG地图背景 */}
         <svg
           viewBox="0 0 400 300"
@@ -46,9 +46,7 @@ export default function MapVisualization({ monitoringPoints }: Props) {
                 }}
               >
                 <div className="relative">
-                  {/* 脉冲动画 */}
                   <div className="absolute inset-0 bg-accent rounded-full animate-pulse opacity-50"></div>
-                  {/* 中心点 */}
                   <div className="w-3 h-3 bg-accent rounded-full relative z-10"></div>
                 </div>
               </div>
@@ -61,22 +59,6 @@ export default function MapVisualization({ monitoringPoints }: Props) {
           <div className="w-8 h-8 border border-accent/30 rounded-full"></div>
           <div className="absolute w-12 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent"></div>
           <div className="absolute w-0.5 h-12 bg-gradient-to-b from-transparent via-accent to-transparent"></div>
-        </div>
-
-        {/* 顶部指标 */}
-        <div className="absolute top-4 left-4 right-4 flex justify-around text-sm pointer-events-none">
-          <div className="text-center">
-            <div className="text-accent font-bold">1802.0mm</div>
-            <div className="text-xs text-muted-foreground">24h降雨量</div>
-          </div>
-          <div className="text-center">
-            <div className="text-accent font-bold">45m</div>
-            <div className="text-xs text-muted-foreground">库水位</div>
-          </div>
-          <div className="text-center">
-            <div className="text-accent font-bold">万m³</div>
-            <div className="text-xs text-muted-foreground">蓄水量</div>
-          </div>
         </div>
       </div>
     </div>
