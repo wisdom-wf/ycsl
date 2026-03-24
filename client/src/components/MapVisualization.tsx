@@ -1,4 +1,12 @@
 export default function MapVisualization() {
+  // 四个水库对应地图图片上的四个亮点位置（从上到下）
+  const reservoirLabels = [
+    { name: '刘庄水库', x: 38, y: 18, labelX: 5, labelY: -2 },
+    { name: '钟楼寺水库', x: 28, y: 32, labelX: 5, labelY: -2 },
+    { name: '崖底水库', x: 40, y: 40, labelX: 5, labelY: -2 },
+    { name: '木头沟水库', x: 60, y: 72, labelX: -12, labelY: -4 },
+  ];
+
   return (
     <div className="h-full w-full overflow-hidden relative bg-[#0a1628]">
       {/* 沿圆圈轨迹流动的亮线动画 */}
@@ -50,6 +58,13 @@ export default function MapVisualization() {
           animation: orbit3 11s linear infinite;
           animation-delay: -4s;
         }
+        @keyframes label-pulse {
+          0%, 100% { opacity: 0.85; }
+          50% { opacity: 1; }
+        }
+        .reservoir-label {
+          animation: label-pulse 3s ease-in-out infinite;
+        }
       `}</style>
 
       {/* 地图图片 - 底层 */}
@@ -60,7 +75,7 @@ export default function MapVisualization() {
         style={{ filter: 'brightness(1.05) contrast(1.05)', zIndex: 1 }}
       />
       
-      {/* 沿同心圆轨迹流动的亮线 - 覆盖在地图上方 */}
+      {/* 沿同心圆轨迹流动的亮线 */}
       <svg
         className="absolute inset-0 w-full h-full"
         style={{ pointerEvents: 'none', zIndex: 2 }}
@@ -68,7 +83,6 @@ export default function MapVisualization() {
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          {/* 流动亮线渐变 - 主亮线 */}
           <linearGradient id="flowGrad1" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="600" y2="300">
             <stop offset="0%" stopColor="#00d4ff" stopOpacity="0" />
             <stop offset="40%" stopColor="#00eaff" stopOpacity="0.7" />
@@ -76,7 +90,6 @@ export default function MapVisualization() {
             <stop offset="60%" stopColor="#00eaff" stopOpacity="0.7" />
             <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
           </linearGradient>
-          {/* 流动亮线渐变 - 副亮线 */}
           <linearGradient id="flowGrad2" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="600" y2="300">
             <stop offset="0%" stopColor="#0088cc" stopOpacity="0" />
             <stop offset="40%" stopColor="#00aadd" stopOpacity="0.4" />
@@ -84,7 +97,6 @@ export default function MapVisualization() {
             <stop offset="60%" stopColor="#00aadd" stopOpacity="0.4" />
             <stop offset="100%" stopColor="#0088cc" stopOpacity="0" />
           </linearGradient>
-          {/* 发光滤镜 */}
           <filter id="orbitGlow">
             <feGaussianBlur stdDeviation="2" result="blur"/>
             <feMerge>
@@ -94,21 +106,51 @@ export default function MapVisualization() {
           </filter>
         </defs>
 
-        {/* 最外圈 r=300 周长≈1885 */}
+        {/* 最外圈 r=300 */}
         <circle cx="300" cy="300" r="300" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-1" filter="url(#orbitGlow)" />
         <circle cx="300" cy="300" r="300" fill="none" stroke="url(#flowGrad2)" strokeWidth="1" className="orbit-line-1b" />
 
-        {/* 第二圈 r=240 周长≈1508 */}
+        {/* 第二圈 r=240 */}
         <circle cx="300" cy="300" r="240" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-2" filter="url(#orbitGlow)" />
         <circle cx="300" cy="300" r="240" fill="none" stroke="url(#flowGrad2)" strokeWidth="1" className="orbit-line-2b" />
 
-        {/* 第三圈 r=180 周长≈1131 */}
+        {/* 第三圈 r=180 */}
         <circle cx="300" cy="300" r="180" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-3" filter="url(#orbitGlow)" />
         <circle cx="300" cy="300" r="180" fill="none" stroke="url(#flowGrad2)" strokeWidth="1" className="orbit-line-3b" />
 
-        {/* 最内圈 r=120 周长≈754 */}
+        {/* 最内圈 r=120 */}
         <circle cx="300" cy="300" r="120" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-4" filter="url(#orbitGlow)" />
       </svg>
+
+      {/* 水库名称标注 - 覆盖在最上层 */}
+      {reservoirLabels.map((item, index) => (
+        <div
+          key={index}
+          className="absolute reservoir-label"
+          style={{
+            left: `${item.x}%`,
+            top: `${item.y}%`,
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            zIndex: 3,
+          }}
+        >
+          <div className="relative flex items-center">
+            {/* 标注文字 */}
+            <div 
+              className="whitespace-nowrap text-[10px] font-bold tracking-wide"
+              style={{
+                color: '#00eaff',
+                textShadow: '0 0 6px rgba(0,212,255,0.6), 0 0 12px rgba(0,212,255,0.3)',
+                marginLeft: `${item.labelX * 4}px`,
+                marginTop: `${item.labelY * 4}px`,
+              }}
+            >
+              {item.name}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

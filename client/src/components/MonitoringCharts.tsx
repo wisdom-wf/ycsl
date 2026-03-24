@@ -90,11 +90,11 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
         </div>
       </div>
 
-      {/* 渗透压力监测 - 梯形图 */}
+      {/* 渗透压力监测 - 纯梯形大坝图，无柱状图 */}
       <div className="flex flex-col" style={{ flex: '1 1 0', minHeight: 0 }}>
         <div className="flex items-center gap-2 mb-1.5 flex-shrink-0">
           <div className="w-1 h-3.5 bg-cyan-400 rounded-full shadow-[0_0_4px_rgba(0,212,255,0.5)]" />
-          <span className="text-[11px] font-bold text-accent">渗透压力监测</span>
+          <span className="text-[11px] font-bold text-accent">渗流压力监测</span>
         </div>
         <div className="bg-[#0f1d35] border border-accent/15 rounded-lg p-2" style={{ flex: '1 1 0', minHeight: '140px' }}>
           <svg viewBox="0 0 320 180" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
