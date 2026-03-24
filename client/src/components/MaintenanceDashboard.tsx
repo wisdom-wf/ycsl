@@ -193,21 +193,21 @@ export default function MaintenanceDashboard() {
 
       {/* 中列：地图和核心指标（60%） */}
       <div className="flex-1 border-r border-border overflow-hidden bg-background p-4 flex flex-col">
-        {/* 顶部核心指标 */}
+        {/* 顶部核心指标 - 空置 */}
         <div className="grid grid-cols-3 gap-3 mb-4 flex-shrink-0">
           <div className="bg-card border border-border rounded p-3 text-center">
             <div className="text-xs text-muted-foreground mb-1">24h降雨量</div>
-            <div className="text-2xl font-bold text-accent">{reservoirData.rainfall24h.toFixed(1)}</div>
+            <div className="text-2xl font-bold text-accent">--</div>
             <div className="text-xs text-muted-foreground">mm</div>
           </div>
           <div className="bg-card border border-border rounded p-3 text-center">
             <div className="text-xs text-muted-foreground mb-1">库水位</div>
-            <div className="text-2xl font-bold text-accent">{reservoirData.waterLevel.toFixed(1)}</div>
+            <div className="text-2xl font-bold text-accent">--</div>
             <div className="text-xs text-muted-foreground">m</div>
           </div>
           <div className="bg-card border border-border rounded p-3 text-center">
             <div className="text-xs text-muted-foreground mb-1">蓄水量</div>
-            <div className="text-2xl font-bold text-accent">{reservoirData.storageVolume}</div>
+            <div className="text-2xl font-bold text-accent">--</div>
             <div className="text-xs text-muted-foreground">万m³</div>
           </div>
         </div>

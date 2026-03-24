@@ -56,7 +56,8 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
               <YAxis 
                 stroke="#8ab4ff" 
                 style={{ fontSize: '9px' }}
-                domain={[0, 1]}
+                domain={[0, 100]}
+                label={{ value: 'mm', angle: -90, position: 'insideLeft', offset: 10, fill: '#8ab4ff', fontSize: 10 }}
               />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#0f1d35', border: '2px solid #00d4ff', borderRadius: '4px', fontSize: '11px' }}
