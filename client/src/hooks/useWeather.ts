@@ -37,6 +37,39 @@ export interface WeatherData {
   forecastLow: string;
   // 降水概率
   rainProbability: string;
+  // 预警信息
+  hasAlert: boolean;
+  alertText: string;
+  alertLevel: string; // '红色' | '橙色' | '黄色' | '蓝色' | ''
+}
+
+// 判断是否需要预警（降水量>20mm 或有灾害预警天气）
+function checkAlert(rain24h: string, weatherCode: string): { hasAlert: boolean; alertText: string; alertLevel: string } {
+  const rain = parseFloat(rain24h || '0');
+  // 降水量超过20mm
+  if (rain >= 20) {
+    let level = '蓝色';
+    let text = '降水预警';
+    if (rain >= 100) { level = '红色'; text = `特大暴雨预警 ${rain}mm`; }
+    else if (rain >= 50) { level = '橙色'; text = `暴雨预警 ${rain}mm`; }
+    else if (rain >= 25) { level = '黄色'; text = `大雨预警 ${rain}mm`; }
+    else { level = '蓝色'; text = `降雨预警 ${rain}mm`; }
+    return { hasAlert: true, alertText: text, alertLevel: level };
+  }
+  // 灾害性天气代码
+  const disasterCodes = ['04', '05', '06', '09', '10', '11', '12', '19', '20', '21', '22', '23', '24', '25'];
+  const code = weatherCode.replace(/^[dn]/, '');
+  if (disasterCodes.includes(code)) {
+    const weatherNames: Record<string, string> = {
+      '04': '雷阵雨', '05': '雷阵雨伴冰雹', '06': '雨夹雪',
+      '09': '大雨', '10': '暴雨', '11': '大暴雨', '12': '特大暴雨',
+      '19': '冻雨', '20': '沙尘暴', '21': '小到中雨', '22': '中到大雨',
+      '23': '大到暴雨', '24': '暴雨到大暴雨', '25': '大暴雨到特大暴雨'
+    };
+    const name = weatherNames[code] || '灾害天气';
+    return { hasAlert: true, alertText: `${name}预警`, alertLevel: '黄色' };
+  }
+  return { hasAlert: false, alertText: '', alertLevel: '' };
 }
 
 // 解析中国天气网返回的JSONP格式数据
@@ -112,6 +145,7 @@ export function useWeather() {
           }
         }
         
+        const alertInfo = checkAlert(sk.rain24h || '0', weatherCode);
         setWeather({
           cityName: sk.cityname || '宜川',
           temp: sk.temp || '--',
@@ -125,6 +159,7 @@ export function useWeather() {
           forecastHigh: forecast?.weatherinfo?.temp || '--',
           forecastLow: forecast?.weatherinfo?.tempn || '--',
           rainProbability: rainProb,
+          ...alertInfo,
         });
         setError(null);
       } else {
@@ -141,6 +176,7 @@ export function useWeather() {
           if (skData) {
             const weatherCode = skData.weathercode || 'd00';
             const icon = weatherIconMap[weatherCode] || '🌤️';
+            const alertInfo2 = checkAlert(skData.rain24h || '0', weatherCode);
             setWeather({
               cityName: skData.cityname || '宜川',
               temp: skData.temp || '--',
@@ -154,6 +190,7 @@ export function useWeather() {
               forecastHigh: '--',
               forecastLow: '--',
               rainProbability: '--',
+              ...alertInfo2,
             });
             setError(null);
             return;
@@ -176,6 +213,9 @@ export function useWeather() {
         forecastHigh: '--',
         forecastLow: '--',
         rainProbability: '--',
+        hasAlert: false,
+        alertText: '',
+        alertLevel: '',
       });
     } finally {
       setLoading(false);

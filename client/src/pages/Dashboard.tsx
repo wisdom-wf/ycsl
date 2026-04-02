@@ -1,10 +1,42 @@
 import { useState, useEffect } from 'react';
-import { Droplets, MapPin, Clock, Wind } from 'lucide-react';
+import { Droplets, MapPin, Clock, Wind, AlertTriangle } from 'lucide-react';
 import MonitoringDashboard from '@/components/MonitoringDashboard';
 import MaintenanceDashboard from '@/components/MaintenanceDashboard';
 import { useWeather } from '@/hooks/useWeather';
 
 type DashboardType = 'monitoring' | 'maintenance';
+
+// 预警等级对应颜色配置
+const alertColors: Record<string, { bg: string; border: string; text: string; glow: string; badge: string }> = {
+  '红色': {
+    bg: 'from-red-950 via-red-900 to-red-950',
+    border: 'border-red-500/60',
+    text: 'text-red-300',
+    glow: 'drop-shadow-[0_0_12px_rgba(239,68,68,0.8)]',
+    badge: 'bg-red-600 text-white',
+  },
+  '橙色': {
+    bg: 'from-orange-950 via-orange-900 to-orange-950',
+    border: 'border-orange-500/60',
+    text: 'text-orange-300',
+    glow: 'drop-shadow-[0_0_12px_rgba(249,115,22,0.8)]',
+    badge: 'bg-orange-500 text-white',
+  },
+  '黄色': {
+    bg: 'from-yellow-950 via-yellow-900 to-yellow-950',
+    border: 'border-yellow-500/60',
+    text: 'text-yellow-300',
+    glow: 'drop-shadow-[0_0_12px_rgba(234,179,8,0.8)]',
+    badge: 'bg-yellow-500 text-black',
+  },
+  '蓝色': {
+    bg: 'from-blue-950 via-blue-900 to-blue-950',
+    border: 'border-blue-400/60',
+    text: 'text-blue-300',
+    glow: 'drop-shadow-[0_0_12px_rgba(96,165,250,0.8)]',
+    badge: 'bg-blue-500 text-white',
+  },
+};
 
 export default function Dashboard() {
   const [activeDashboard, setActiveDashboard] = useState<DashboardType>('monitoring');
@@ -34,10 +66,57 @@ export default function Dashboard() {
     return `${h}:${min}:${s}`;
   };
 
+  const hasAlert = weather?.hasAlert ?? false;
+  const alertLevel = weather?.alertLevel ?? '';
+  const alertStyle = hasAlert && alertLevel ? alertColors[alertLevel] : null;
+
+  // 正常状态下的标题颜色
+  const normalHeaderBg = 'from-[#0a1628] via-[#0d1f3c] to-[#0a1628]';
+  const normalBorder = 'border-accent/20';
+
   return (
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       {/* 顶部导航栏 */}
-      <header className="border-b border-accent/20 bg-gradient-to-r from-[#0a1628] via-[#0d1f3c] to-[#0a1628] sticky top-0 z-50 flex-shrink-0">
+      <header
+        className={`border-b sticky top-0 z-50 flex-shrink-0 transition-all duration-700 ${
+          alertStyle
+            ? `bg-gradient-to-r ${alertStyle.bg} ${alertStyle.border}`
+            : `bg-gradient-to-r ${normalHeaderBg} ${normalBorder}`
+        } ${hasAlert ? 'alert-breathing' : ''}`}
+        style={hasAlert ? {
+          animation: 'alertBreathing 2s ease-in-out infinite',
+        } : {}}
+      >
+        {/* 呼吸灯CSS动画注入 */}
+        {hasAlert && (
+          <style>{`
+            @keyframes alertBreathing {
+              0%, 100% { box-shadow: 0 0 0 0 ${
+                alertLevel === '红色' ? 'rgba(239,68,68,0)' :
+                alertLevel === '橙色' ? 'rgba(249,115,22,0)' :
+                alertLevel === '黄色' ? 'rgba(234,179,8,0)' :
+                'rgba(96,165,250,0)'
+              }, inset 0 0 0 0 ${
+                alertLevel === '红色' ? 'rgba(239,68,68,0)' :
+                alertLevel === '橙色' ? 'rgba(249,115,22,0)' :
+                alertLevel === '黄色' ? 'rgba(234,179,8,0)' :
+                'rgba(96,165,250,0)'
+              }; }
+              50% { box-shadow: 0 0 30px 8px ${
+                alertLevel === '红色' ? 'rgba(239,68,68,0.5)' :
+                alertLevel === '橙色' ? 'rgba(249,115,22,0.5)' :
+                alertLevel === '黄色' ? 'rgba(234,179,8,0.5)' :
+                'rgba(96,165,250,0.5)'
+              }, inset 0 0 40px 4px ${
+                alertLevel === '红色' ? 'rgba(239,68,68,0.15)' :
+                alertLevel === '橙色' ? 'rgba(249,115,22,0.15)' :
+                alertLevel === '黄色' ? 'rgba(234,179,8,0.15)' :
+                'rgba(96,165,250,0.15)'
+              }; }
+            }
+          `}</style>
+        )}
+
         <div className="px-4 py-2.5 flex items-center justify-between">
           {/* 左侧：天气信息 */}
           <div className="flex items-center gap-4 min-w-[280px]">
@@ -47,7 +126,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-3 text-xs">
                 <span className="text-2xl">{weather.weatherIcon}</span>
                 <div className="leading-tight">
-                  <div className="text-accent font-bold text-sm">
+                  <div className={`font-bold text-sm ${alertStyle ? alertStyle.text : 'text-accent'}`}>
                     {weather.weather} {weather.temp}℃
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground mt-0.5">
@@ -71,21 +150,37 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* 中间：标题 */}
-          <div className="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
-            <div className="relative">
-              <MapPin className="w-6 h-6 text-accent drop-shadow-[0_0_6px_rgba(0,212,255,0.6)]" />
+          {/* 中间：标题 + 预警标签 */}
+          <div className="flex flex-col items-center gap-1 absolute left-1/2 -translate-x-1/2">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <MapPin className={`w-6 h-6 ${alertStyle ? alertStyle.text : 'text-accent'} ${alertStyle ? alertStyle.glow : 'drop-shadow-[0_0_6px_rgba(0,212,255,0.6)]'}`} />
+              </div>
+              <h1 className={`text-xl font-bold tracking-wider ${
+                alertStyle
+                  ? `${alertStyle.text} drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]`
+                  : 'bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,212,255,0.3)]'
+              }`}>
+                宜川县水利工程运行管理平台
+              </h1>
             </div>
-            <h1 className="text-xl font-bold tracking-wider bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,212,255,0.3)]">
-              宜川县水利工程运行管理平台
-            </h1>
+            {/* 预警标签 */}
+            {hasAlert && weather && (
+              <div className={`flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold ${alertStyle?.badge}`}
+                style={{ animation: 'alertBreathing 2s ease-in-out infinite' }}>
+                <AlertTriangle className="w-3 h-3" />
+                {alertLevel}预警 · {weather.alertText}
+              </div>
+            )}
           </div>
 
           {/* 右侧：时间 */}
           <div className="flex items-center gap-2 min-w-[260px] justify-end">
-            <Clock className="w-4 h-4 text-accent/60" />
+            <Clock className={`w-4 h-4 ${alertStyle ? alertStyle.text + '/60' : 'text-accent/60'}`} />
             <div className="text-right leading-tight">
-              <div className="text-sm font-mono text-accent tracking-wider">{formatTime(currentTime)}</div>
+              <div className={`text-sm font-mono tracking-wider ${alertStyle ? alertStyle.text : 'text-accent'}`}>
+                {formatTime(currentTime)}
+              </div>
               <div className="text-xs text-muted-foreground">{formatDate(currentTime)}</div>
             </div>
           </div>
@@ -97,20 +192,20 @@ export default function Dashboard() {
             onClick={() => setActiveDashboard('monitoring')}
             className={`px-6 py-2 text-sm font-bold tracking-wide transition-all duration-300 relative border-b-2 ${
               activeDashboard === 'monitoring'
-                ? 'border-accent text-accent bg-gradient-to-b from-accent/15 to-transparent'
+                ? `border-${alertStyle ? alertLevel === '红色' ? 'red-400' : alertLevel === '橙色' ? 'orange-400' : alertLevel === '黄色' ? 'yellow-400' : 'blue-400' : 'accent'} ${alertStyle ? alertStyle.text : 'text-accent'} bg-gradient-to-b from-accent/15 to-transparent`
                 : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-accent/5'
             }`}
           >
             监测信息
             {activeDashboard === 'monitoring' && (
-              <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-transparent via-accent to-transparent" />
+              <div className={`absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-transparent ${alertStyle ? `via-${alertLevel === '红色' ? 'red' : alertLevel === '橙色' ? 'orange' : alertLevel === '黄色' ? 'yellow' : 'blue'}-400` : 'via-accent'} to-transparent`} />
             )}
           </button>
           <button
             onClick={() => setActiveDashboard('maintenance')}
             className={`px-6 py-2 text-sm font-bold tracking-wide transition-all duration-300 relative border-b-2 ${
               activeDashboard === 'maintenance'
-                ? 'border-accent text-accent bg-gradient-to-b from-accent/15 to-transparent'
+                ? `${alertStyle ? alertStyle.text : 'text-accent'} border-accent bg-gradient-to-b from-accent/15 to-transparent`
                 : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-accent/5'
             }`}
           >
