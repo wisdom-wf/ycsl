@@ -156,7 +156,7 @@ export default function Dashboard() {
               <div className="relative">
                 <MapPin className={`w-6 h-6 ${alertStyle ? alertStyle.text : 'text-accent'} ${alertStyle ? alertStyle.glow : 'drop-shadow-[0_0_6px_rgba(0,212,255,0.6)]'}`} />
               </div>
-              <h1 className={`text-xl font-bold tracking-wider ${
+              <h1 className={`text-3xl font-bold tracking-wider ${
                 alertStyle
                   ? `${alertStyle.text} drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]`
                   : 'bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,212,255,0.3)]'

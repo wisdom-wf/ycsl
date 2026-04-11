@@ -325,22 +325,24 @@ export default function ReservoirInfo({ reservoir, data }: Props) {
           <div className="w-1 h-4 bg-cyan-400 rounded-full shadow-[0_0_6px_rgba(0,212,255,0.5)]" />
           <span className="text-xs font-bold text-accent tracking-wide">责任人信息</span>
         </div>
-        <div className="bg-[#0f1d35] border border-accent/15 rounded-lg p-3 space-y-3 text-xs">
+        <div className="bg-[#0f1d35] border border-accent/15 rounded-lg p-3 space-y-2.5">
           {[
             { role: '行政责任人', name: reservoir.contacts.adminName, phone: reservoir.contacts.adminPhone, icon: Shield },
             { role: '技术责任人', name: reservoir.contacts.techName, phone: reservoir.contacts.techPhone, icon: Wrench },
             { role: '巡查责任人', name: reservoir.contacts.inspectionName, phone: reservoir.contacts.inspectionPhone, icon: Eye },
           ].map((person, i) => (
-            <div key={i} className="flex items-start gap-2 pb-2 border-b border-accent/5 last:border-b-0 last:pb-0">
-              <div className="w-6 h-6 bg-accent/10 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <person.icon className="w-3 h-3 text-accent/60" />
+            <div key={i} className="pb-2.5 border-b border-accent/5 last:border-b-0 last:pb-0">
+              <div className="flex items-center gap-1.5 mb-1">
+                <div className="w-5 h-5 bg-accent/10 rounded flex items-center justify-center flex-shrink-0">
+                  <person.icon className="w-3 h-3 text-accent/60" />
+                </div>
+                <span className="text-xs text-muted-foreground">{person.role}</span>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-muted-foreground text-[10px]">{person.role}</div>
-                <div className="text-cyan-300 font-medium">{person.name}</div>
-                <div className="text-muted-foreground flex items-center gap-1 mt-0.5">
-                  <Phone className="w-2.5 h-2.5 text-accent/40" />
-                  <span className="font-mono text-[10px]">{person.phone}</span>
+              <div className="flex items-center justify-between gap-2 pl-1">
+                <span className="text-sm text-cyan-300 font-medium">{person.name}</span>
+                <div className="flex items-center gap-1">
+                  <Phone className="w-3 h-3 text-accent/40 flex-shrink-0" />
+                  <span className="font-mono text-sm text-muted-foreground">{person.phone}</span>
                 </div>
               </div>
             </div>

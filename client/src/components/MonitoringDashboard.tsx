@@ -85,9 +85,9 @@ export default function MonitoringDashboard() {
               <div className="absolute top-2 right-2 opacity-20 group-hover:opacity-30 transition-opacity">
                 <item.icon className="w-8 h-8 text-accent" />
               </div>
-              <div className="text-xs text-muted-foreground mb-1">{item.label}</div>
-              <div className="text-2xl font-bold text-accent/60 font-mono">--</div>
-              <div className="text-xs text-muted-foreground/60">{item.unit}</div>
+              <div className="text-sm text-muted-foreground mb-1">{item.label}</div>
+              <div className="text-4xl font-bold text-accent/60 font-mono">--</div>
+              <div className="text-sm text-muted-foreground/60">{item.unit}</div>
             </div>
           ))}
         </div>
@@ -102,7 +102,7 @@ export default function MonitoringDashboard() {
       <div className="w-[22%] border-l border-accent/10 overflow-y-auto bg-gradient-to-b from-[#0a1628] to-[#0d1a30] px-3 py-3">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-1 h-4 bg-accent rounded-full shadow-[0_0_6px_rgba(0,212,255,0.5)]" />
-          <span className="text-xs font-bold text-accent tracking-wide">{selectedReservoir.name}监测信息</span>
+          <span className="text-sm font-bold text-accent tracking-wide">{selectedReservoir.name}监测信息</span>
         </div>
         <MonitoringCharts reservoirData={reservoirData} currentTime={currentTime} />
       </div>
