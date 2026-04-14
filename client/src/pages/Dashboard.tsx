@@ -118,30 +118,31 @@ export default function Dashboard() {
         )}
 
         <div className="px-4 py-2.5 flex items-center justify-between">
-          {/* 左侧：天气信息 */}
-          <div className="flex items-center gap-4 min-w-[280px]">
+          {/* 左侧：天气信息（单行） */}
+          <div className="flex items-center gap-3 min-w-[320px]">
             {loading ? (
-              <div className="text-xs text-muted-foreground">加载天气中...</div>
+              <div className="text-sm text-muted-foreground">加载天气中...</div>
             ) : weather ? (
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-xl flex-shrink-0">{weather.weatherIcon}</span>
-                <div className="leading-tight">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`font-bold text-sm ${alertStyle ? alertStyle.text : 'text-accent'}`}>{weather.weather} {weather.temp}℃</span>
-                    <span className="flex items-center gap-0.5 text-muted-foreground">
-                      <Wind className="w-3 h-3 text-blue-400" />
-                      {weather.windDirection} {weather.windSpeed}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground mt-0.5">
-                    <span className="flex items-center gap-0.5"><Droplets className="w-3 h-3 text-blue-400" />湿度 {weather.humidity}</span>
-                    <span>24h降水 {weather.rain24h}mm</span>
-                    <span>AQI {weather.aqi}</span>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl flex-shrink-0">{weather.weatherIcon}</span>
+                <span className={`font-bold text-base flex-shrink-0 ${alertStyle ? alertStyle.text : 'text-accent'}`}>{weather.weather} {weather.temp}℃</span>
+                <span className="text-muted-foreground/60 text-sm">|</span>
+                <span className="flex items-center gap-1 text-sm text-muted-foreground flex-shrink-0">
+                  <Wind className="w-3.5 h-3.5 text-blue-400" />
+                  {weather.windDirection} {weather.windSpeed}
+                </span>
+                <span className="text-muted-foreground/60 text-sm">|</span>
+                <span className="flex items-center gap-1 text-sm text-muted-foreground flex-shrink-0">
+                  <Droplets className="w-3.5 h-3.5 text-blue-400" />
+                  {weather.humidity}
+                </span>
+                <span className="text-muted-foreground/60 text-sm">|</span>
+                <span className="text-sm text-muted-foreground flex-shrink-0">24h {weather.rain24h}mm</span>
+                <span className="text-muted-foreground/60 text-sm">|</span>
+                <span className="text-sm text-muted-foreground flex-shrink-0">AQI {weather.aqi}</span>
               </div>
             ) : (
-              <div className="text-xs text-muted-foreground">天气数据获取失败</div>
+              <div className="text-sm text-muted-foreground">天气数据获取失败</div>
             )}
           </div>
 
@@ -169,15 +170,12 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* 右侧：时间 */}
-          <div className="flex items-center gap-2 min-w-[260px] justify-end">
-            <Clock className={`w-4 h-4 ${alertStyle ? alertStyle.text + '/60' : 'text-accent/60'}`} />
-            <div className="text-right leading-tight">
-              <div className={`text-sm font-mono tracking-wider ${alertStyle ? alertStyle.text : 'text-accent'}`}>
-                {formatTime(currentTime)}
-              </div>
-              <div className="text-xs text-muted-foreground">{formatDate(currentTime)}</div>
-            </div>
+          {/* 右侧：时间（单行） */}
+          <div className="flex items-center gap-2.5 min-w-[320px] justify-end">
+            <Clock className={`w-4 h-4 flex-shrink-0 ${alertStyle ? alertStyle.text + '/60' : 'text-accent/60'}`} />
+            <span className={`text-base font-mono tracking-wider flex-shrink-0 ${alertStyle ? alertStyle.text : 'text-accent'}`}>{formatTime(currentTime)}</span>
+            <span className="text-muted-foreground/60 text-sm">|</span>
+            <span className="text-sm text-muted-foreground flex-shrink-0">{formatDate(currentTime)}</span>
           </div>
         </div>
 
