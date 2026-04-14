@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { ReservoirData } from '@shared/const';
 
 interface Props {
@@ -59,6 +59,13 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
                 contentStyle={{ backgroundColor: '#0a1628', border: '1px solid rgba(0,212,255,0.3)', borderRadius: '6px', fontSize: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}
                 labelStyle={{ color: '#8ab4ff' }}
                 formatter={(value: any) => [`${(value as number).toFixed(2)} mm`, '降雨量']}
+              />
+              <ReferenceLine
+                y={50}
+                stroke="#ef4444"
+                strokeWidth={1.5}
+                strokeDasharray="4 3"
+                label={{ value: '警戒 50mm', position: 'insideTopRight', fill: '#ef4444', fontSize: 9, fontWeight: 'bold' }}
               />
               <Bar 
                 dataKey="value" 
