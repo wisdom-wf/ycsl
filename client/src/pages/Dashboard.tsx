@@ -123,25 +123,20 @@ export default function Dashboard() {
             {loading ? (
               <div className="text-xs text-muted-foreground">加载天气中...</div>
             ) : weather ? (
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-2xl">{weather.weatherIcon}</span>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-xl flex-shrink-0">{weather.weatherIcon}</span>
                 <div className="leading-tight">
-                  <div className={`font-bold text-sm ${alertStyle ? alertStyle.text : 'text-accent'}`}>
-                    {weather.weather} {weather.temp}℃
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground mt-0.5">
-                    <span className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`font-bold text-sm ${alertStyle ? alertStyle.text : 'text-accent'}`}>{weather.weather} {weather.temp}℃</span>
+                    <span className="flex items-center gap-0.5 text-muted-foreground">
                       <Wind className="w-3 h-3 text-blue-400" />
                       {weather.windDirection} {weather.windSpeed}
                     </span>
-                    <span className="flex items-center gap-0.5">
-                      <Droplets className="w-3 h-3 text-blue-400" />
-                      湿度 {weather.humidity}
-                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground mt-0.5">
-                    <span>24h降水: {weather.rain24h}mm</span>
-                    <span>AQI: {weather.aqi}</span>
+                    <span className="flex items-center gap-0.5"><Droplets className="w-3 h-3 text-blue-400" />湿度 {weather.humidity}</span>
+                    <span>24h降水 {weather.rain24h}mm</span>
+                    <span>AQI {weather.aqi}</span>
                   </div>
                 </div>
               </div>
