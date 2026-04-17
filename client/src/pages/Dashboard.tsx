@@ -138,8 +138,7 @@ export default function Dashboard() {
                 </span>
                 <span className="text-muted-foreground/60 text-sm">|</span>
                 <span className="text-sm text-muted-foreground flex-shrink-0">24h {weather.rain24h}mm</span>
-                <span className="text-muted-foreground/60 text-sm">|</span>
-                <span className="text-sm text-muted-foreground flex-shrink-0">AQI {weather.aqi}</span>
+
               </div>
             ) : (
               <div className="text-sm text-muted-foreground">天气数据获取失败</div>
