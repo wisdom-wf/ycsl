@@ -73,6 +73,19 @@ export interface MaintenanceStats {
 // 模拟数据
 export const RESERVOIRS: Reservoir[] = [
   {
+    id: 'r3',
+    name: '钟楼寺水库',
+    coordinates: [109.7, 36.3],
+    contacts: {
+      adminName: '禹罡',
+      adminPhone: '15991913033',
+      techName: '王栓成',
+      techPhone: '13891126568',
+      inspectionName: '范月发',
+      inspectionPhone: '18309114588',
+    },
+  },
+  {
     id: 'r1',
     name: '刘庄水库',
     coordinates: [109.5, 36.5],
@@ -96,19 +109,6 @@ export const RESERVOIRS: Reservoir[] = [
       techPhone: '15991561717',
       inspectionName: '冯建伟',
       inspectionPhone: '13891117327',
-    },
-  },
-  {
-    id: 'r3',
-    name: '钟楼寺水库',
-    coordinates: [109.7, 36.3],
-    contacts: {
-      adminName: '禹罡',
-      adminPhone: '15991913033',
-      techName: '王栓成',
-      techPhone: '13891126568',
-      inspectionName: '范月发',
-      inspectionPhone: '18309114588',
     },
   },
   {
