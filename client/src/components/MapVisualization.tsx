@@ -3,10 +3,10 @@ export default function MapVisualization() {
   // 换算公式：svgX = pixelX/1380*600, svgY = pixelY/1258*547
   // viewBox="0 0 600 547" 与原图宽高比 1380:1258 完全一致，消除任何缩放漂移
   const reservoirLabels = [
-    { name: '刘庄水库',   px: 203, py: 130, textDx: 12,  textDy: -12 },
-    { name: '钟楼寺水库', px: 157, py: 192, textDx: 12,  textDy: -12 },
-    { name: '崖底水库',   px: 239, py: 222, textDx: 12,  textDy: -12 },
-    { name: '木头沟水库', px: 362, py: 431, textDx: -90, textDy: -14 },
+    { name: '钟楼寺水库', px: 203, py: 130, textDx: 12,  textDy: -12 },
+    { name: '刘庄水库',   px: 157, py: 192, textDx: 12,  textDy: -12 },
+    { name: '木头沟水库', px: 239, py: 222, textDx: 12,  textDy: -12 },
+    { name: '崖底水库',   px: 362, py: 431, textDx: -90, textDy: -14 },
   ];
 
   return (
