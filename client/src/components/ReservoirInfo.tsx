@@ -105,7 +105,7 @@ const VIDEO_CONFIG: Record<string, { type: 'fail' | 'image'; imagePath?: string 
   r1: { type: 'fail' },
   r2: { type: 'image', imagePath: '/ycsl/video/mutougou.jpg' },
   r3: { type: 'image', imagePath: '/ycsl/video/zhonglousi.jpg' },
-  r4: { type: 'fail' },
+  r4: { type: 'image', imagePath: '/ycsl/video/yadi.jpg' },
 };
 
 // 渲染视频内容（loading / failed / success 三种状态）
