@@ -1,6 +1,92 @@
 import { useState, useEffect, useRef } from 'react';
 import { Reservoir, ReservoirData } from '@shared/const';
 import { Phone, Video, Shield, Wrench, Eye, AlertTriangle, RefreshCw, Maximize2, X } from 'lucide-react';
+import { useWeather } from '@/hooks/useWeather';
+
+// ─── 动态视频滤镜 ───────────────────────────────────────────────────────────
+// 根据当前时间段和天气状况，返回一组 CSS filter 参数，让监控画面更真实
+function useVideoFilter() {
+  const { weather } = useWeather();
+  const hour = new Date().getHours();
+
+  // 1. 时间段基础亮度 & 色调
+  let brightness = 1.0;
+  let saturate  = 1.0;
+  let sepia     = 0;
+  let hueRotate = 0;
+  let contrast  = 1.0;
+  let overlay   = ''; // 额外叠加层颜色（rgba）
+
+  if (hour >= 0 && hour < 5) {
+    // 深夜：极暗，轻微蓝绿偏色（夜视感）
+    brightness = 0.25; saturate = 0.3; hueRotate = 160; contrast = 1.4;
+    overlay = 'rgba(0,30,20,0.55)';
+  } else if (hour >= 5 && hour < 7) {
+    // 黎明：昏暗橙蓝混合
+    brightness = 0.45; saturate = 0.6; sepia = 0.25; hueRotate = 10; contrast = 1.1;
+    overlay = 'rgba(30,10,0,0.35)';
+  } else if (hour >= 7 && hour < 9) {
+    // 清晨：偏暖，轻微雾感
+    brightness = 0.80; saturate = 0.85; sepia = 0.12; contrast = 0.95;
+    overlay = 'rgba(255,220,150,0.08)';
+  } else if (hour >= 9 && hour < 17) {
+    // 白天：正常
+    brightness = 1.0; saturate = 1.0; contrast = 1.0;
+  } else if (hour >= 17 && hour < 19) {
+    // 傍晚：暖橙
+    brightness = 0.75; saturate = 0.9; sepia = 0.2; hueRotate = -10; contrast = 1.05;
+    overlay = 'rgba(255,120,30,0.12)';
+  } else if (hour >= 19 && hour < 21) {
+    // 夜幕降临：较暗，偏蓝
+    brightness = 0.45; saturate = 0.5; hueRotate = 20; contrast = 1.2;
+    overlay = 'rgba(0,10,40,0.40)';
+  } else {
+    // 深夜前段
+    brightness = 0.30; saturate = 0.35; hueRotate = 150; contrast = 1.35;
+    overlay = 'rgba(0,20,15,0.50)';
+  }
+
+  // 2. 天气修正（叠加在时间基础上）
+  const w = weather?.weather || '';
+  const rain = parseFloat(weather?.rain24h || '0');
+
+  if (/雷|暴雨|大雨/.test(w) || rain > 30) {
+    // 暴雨：大幅压暗，高对比，蓝灰偏色
+    brightness *= 0.55; saturate *= 0.45; contrast *= 1.3; hueRotate += 15;
+    overlay = 'rgba(5,15,40,0.55)';
+  } else if (/中雨|阵雨/.test(w) || rain > 10) {
+    // 中雨：压暗，轻微蓝灰
+    brightness *= 0.70; saturate *= 0.60; contrast *= 1.15; hueRotate += 8;
+    overlay = overlay || 'rgba(10,20,50,0.35)';
+  } else if (/小雨|毛毛雨|细雨/.test(w) || rain > 2) {
+    // 小雨：轻微压暗，雾感
+    brightness *= 0.82; saturate *= 0.75; contrast *= 1.05;
+    overlay = overlay || 'rgba(20,30,60,0.20)';
+  } else if (/阴|多云/.test(w)) {
+    // 阴天：轻微压暗，去饱和
+    brightness *= 0.88; saturate *= 0.80; contrast *= 1.05;
+    overlay = overlay || 'rgba(20,20,30,0.15)';
+  } else if (/雾|霾|沙尘/.test(w)) {
+    // 雾霾：大幅去饱和，暖黄偏色
+    brightness *= 0.70; saturate *= 0.30; sepia += 0.30; contrast *= 0.90;
+    overlay = 'rgba(180,150,80,0.25)';
+  } else if (/雪/.test(w)) {
+    // 雪天：冷白，高亮度
+    brightness *= 1.10; saturate *= 0.40; hueRotate += 200; contrast *= 0.95;
+    overlay = 'rgba(200,220,255,0.15)';
+  }
+
+  // 3. 组装 CSS filter 字符串
+  const parts = [
+    `brightness(${brightness.toFixed(2)})`,
+    `contrast(${contrast.toFixed(2)})`,
+    `saturate(${saturate.toFixed(2)})`,
+  ];
+  if (sepia > 0)     parts.push(`sepia(${sepia.toFixed(2)})`);
+  if (hueRotate !== 0) parts.push(`hue-rotate(${hueRotate}deg)`);
+
+  return { filter: parts.join(' '), overlay };
+}
 
 interface Props {
   reservoir: Reservoir;
@@ -28,7 +114,8 @@ function renderVideoContent(
   status: VideoStatus,
   config: { type: 'fail' | 'image'; imagePath?: string },
   handleRetry: () => void,
-  isLarge = false
+  isLarge = false,
+  videoFilter?: { filter: string; overlay: string }
 ) {
   return (
     <>
@@ -120,11 +207,19 @@ function renderVideoContent(
           <img
             src={config.imagePath}
             alt="视频监控画面"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-all duration-1000"
+            style={videoFilter ? { filter: videoFilter.filter } : undefined}
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
             }}
           />
+          {/* 天气/时间叠加色调层 */}
+          {videoFilter?.overlay && (
+            <div
+              className="absolute inset-0 pointer-events-none transition-all duration-1000"
+              style={{ background: videoFilter.overlay }}
+            />
+          )}
           {/* 监控叠加层 */}
           <div className="absolute inset-0 pointer-events-none">
             {/* LIVE 角标 */}
@@ -165,6 +260,7 @@ function VideoMonitor({ reservoirId, reservoirName }: { reservoirId: string; res
   const [expanded, setExpanded] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const config = VIDEO_CONFIG[reservoirId];
+  const videoFilter = useVideoFilter();
 
   // 每次切换水库时重置并重新加载
   useEffect(() => {
@@ -200,7 +296,7 @@ function VideoMonitor({ reservoirId, reservoirName }: { reservoirId: string; res
         onClick={() => setExpanded(true)}
         title="点击放大"
       >
-        {renderVideoContent(status, config, handleRetry, false)}
+        {renderVideoContent(status, config, handleRetry, false, videoFilter)}
 
         {/* 悬停时显示放大图标提示 */}
         <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
@@ -269,7 +365,7 @@ function VideoMonitor({ reservoirId, reservoirName }: { reservoirId: string; res
 
             {/* 视频内容区域 */}
             <div className="bg-[#0a1628] border border-cyan-500/30 border-t-0 rounded-b-lg overflow-hidden aspect-video relative">
-              {renderVideoContent(status, config, handleRetry, true)}
+              {renderVideoContent(status, config, handleRetry, true, videoFilter)}
             </div>
 
             {/* 底部提示 */}
