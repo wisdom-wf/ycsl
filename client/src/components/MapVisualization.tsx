@@ -1,12 +1,18 @@
-export default function MapVisualization() {
+interface Props {
+  selectedReservoirId?: string;
+  onSelectReservoir?: (id: string) => void;
+}
+
+export default function MapVisualization({ selectedReservoirId = 'r1', onSelectReservoir }: Props) {
   // 坐标来源：Python精确检测地图原图(1380x1258)中各水库发光点的像素坐标
   // 换算公式：svgX = pixelX/1380*600, svgY = pixelY/1258*547
   // viewBox="0 0 600 547" 与原图宽高比 1380:1258 完全一致，消除任何缩放漂移
+  // id 与 shared/const.ts 中 RESERVOIRS 数组一一对应
   const reservoirLabels = [
-    { name: '钟楼寺水库', px: 203, py: 130, textDx: 12,  textDy: -12 },
-    { name: '刘庄水库',   px: 157, py: 192, textDx: 12,  textDy: -12 },
-    { name: '木头沟水库', px: 239, py: 222, textDx: 12,  textDy: -12 },
-    { name: '崖底水库',   px: 362, py: 431, textDx: -90, textDy: -14 },
+    { id: 'r3', name: '钟楼寺水库', px: 203, py: 130, textDx: 12,  textDy: -12 },
+    { id: 'r1', name: '刘庄水库',   px: 157, py: 192, textDx: 12,  textDy: -12 },
+    { id: 'r2', name: '木头沟水库', px: 239, py: 222, textDx: 12,  textDy: -12 },
+    { id: 'r4', name: '崖底水库',   px: 362, py: 431, textDx: -90, textDy: -14 },
   ];
 
   return (
@@ -31,14 +37,14 @@ export default function MapVisualization() {
           0%   { r: 6;  opacity: 0.8; stroke-width: 1.5; }
           100% { r: 18; opacity: 0;   stroke-width: 0.5; }
         }
-        .dot-core  { animation: dot-pulse   2s ease-in-out infinite; }
-        .dot-ring  { animation: ring-expand 2.4s ease-out infinite; }
-        .dot-ring2 { animation: ring-expand 2.4s ease-out infinite; animation-delay: -1.2s; }
-        @keyframes label-pulse {
-          0%, 100% { opacity: 0.9; }
-          50%       { opacity: 1;  }
+        .dot-core-active  { animation: dot-pulse   2s ease-in-out infinite; }
+        .dot-ring-active  { animation: ring-expand 2.4s ease-out infinite; }
+        .dot-ring2-active { animation: ring-expand 2.4s ease-out infinite; animation-delay: -1.2s; }
+        @keyframes label-pulse-active {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.8; }
         }
-        .reservoir-label-text { animation: label-pulse 3s ease-in-out infinite; }
+        .label-active { animation: label-pulse-active 2s ease-in-out infinite; }
       `}</style>
 
       {/*
@@ -74,8 +80,16 @@ export default function MapVisualization() {
             <feGaussianBlur stdDeviation="3" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
+          <filter id="dotGlowActive">
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
           <filter id="textGlow">
             <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="textGlowActive">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
@@ -97,33 +111,69 @@ export default function MapVisualization() {
         <circle cx="300" cy="273" r="168" fill="none" stroke="url(#flowGrad2)" strokeWidth="1" className="orbit-line-3b" />
         <circle cx="300" cy="273" r="112" fill="none" stroke="url(#flowGrad1)" strokeWidth="1" className="orbit-line-4"  filter="url(#orbitGlow)" />
 
-        {/* 水库标注点 + 文字 */}
-        {reservoirLabels.map((item, i) => (
-          <g key={i}>
-            <circle cx={item.px} cy={item.py} r="6" fill="none" stroke="#00eaff" strokeWidth="1.5" className="dot-ring"  opacity="0.8" />
-            <circle cx={item.px} cy={item.py} r="6" fill="none" stroke="#00eaff" strokeWidth="1"   className="dot-ring2" opacity="0.6" />
-            <circle cx={item.px} cy={item.py} r="4" fill="#00eaff" className="dot-core" filter="url(#dotGlow)" />
-            <circle cx={item.px} cy={item.py} r="2" fill="#ffffff" opacity="0.9" />
-            <line
-              x1={item.px} y1={item.py}
-              x2={item.px + item.textDx * 0.6}
-              y2={item.py + item.textDy * 0.6}
-              stroke="#00eaff" strokeWidth="0.8" opacity="0.5"
-            />
-            <text
-              x={item.px + item.textDx}
-              y={item.py + item.textDy}
-              fontSize="13"
-              fontWeight="bold"
-              fill="#00eaff"
-              className="reservoir-label-text"
-              filter="url(#textGlow)"
-              style={{ letterSpacing: '0.05em' }}
+        {/* 水库标注点 + 文字：选中的动态特效，未选中的静态 */}
+        {reservoirLabels.map((item) => {
+          const isActive = item.id === selectedReservoirId;
+          return (
+            <g
+              key={item.id}
+              style={{ cursor: onSelectReservoir ? 'pointer' : 'default' }}
+              onClick={() => onSelectReservoir?.(item.id)}
             >
-              {item.name}
-            </text>
-          </g>
-        ))}
+              {isActive ? (
+                /* 选中：双层扩散光圈 + 脉冲核心 */
+                <>
+                  <circle cx={item.px} cy={item.py} r="6" fill="none" stroke="#00eaff" strokeWidth="1.5" className="dot-ring-active"  opacity="0.8" />
+                  <circle cx={item.px} cy={item.py} r="6" fill="none" stroke="#00eaff" strokeWidth="1"   className="dot-ring2-active" opacity="0.6" />
+                  <circle cx={item.px} cy={item.py} r="4" fill="#00eaff" className="dot-core-active" filter="url(#dotGlowActive)" />
+                  <circle cx={item.px} cy={item.py} r="2" fill="#ffffff" opacity="1" />
+                  <line
+                    x1={item.px} y1={item.py}
+                    x2={item.px + item.textDx * 0.6}
+                    y2={item.py + item.textDy * 0.6}
+                    stroke="#00eaff" strokeWidth="1" opacity="0.8"
+                  />
+                  <text
+                    x={item.px + item.textDx}
+                    y={item.py + item.textDy}
+                    fontSize="14"
+                    fontWeight="bold"
+                    fill="#00ffff"
+                    className="label-active"
+                    filter="url(#textGlowActive)"
+                    style={{ letterSpacing: '0.05em' }}
+                  >
+                    {item.name}
+                  </text>
+                </>
+              ) : (
+                /* 未选中：静态小圆点 + 淡色文字 */
+                <>
+                  <circle cx={item.px} cy={item.py} r="3.5" fill="#00eaff" opacity="0.45" filter="url(#dotGlow)" />
+                  <circle cx={item.px} cy={item.py} r="1.5" fill="#ffffff" opacity="0.6" />
+                  <line
+                    x1={item.px} y1={item.py}
+                    x2={item.px + item.textDx * 0.6}
+                    y2={item.py + item.textDy * 0.6}
+                    stroke="#00eaff" strokeWidth="0.6" opacity="0.3"
+                  />
+                  <text
+                    x={item.px + item.textDx}
+                    y={item.py + item.textDy}
+                    fontSize="12"
+                    fontWeight="normal"
+                    fill="#00eaff"
+                    opacity="0.45"
+                    filter="url(#textGlow)"
+                    style={{ letterSpacing: '0.03em' }}
+                  >
+                    {item.name}
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
       </svg>
     </div>
   );

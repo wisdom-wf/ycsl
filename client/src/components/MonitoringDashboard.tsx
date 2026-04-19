@@ -94,7 +94,7 @@ export default function MonitoringDashboard() {
 
         {/* 地图区域 */}
         <div className="flex-1 min-h-0 overflow-hidden rounded-lg border border-accent/10">
-          <MapVisualization />
+          <MapVisualization selectedReservoirId={selectedReservoirId} onSelectReservoir={setSelectedReservoirId} />
         </div>
       </div>
 
