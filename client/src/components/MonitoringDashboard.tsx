@@ -4,8 +4,12 @@ import { RESERVOIRS, RESERVOIR_DATA, Reservoir } from '@shared/const';
 import ReservoirInfo from './ReservoirInfo';
 import MapVisualization from './MapVisualization';
 import MonitoringCharts from './MonitoringCharts';
+import { WeatherData } from '@/hooks/useWeather';
 
-export default function MonitoringDashboard() {
+interface Props {
+  weather?: WeatherData | null;
+}
+export default function MonitoringDashboard({ weather }: Props) {
   const [selectedReservoirId, setSelectedReservoirId] = useState('r1');
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -105,7 +109,7 @@ export default function MonitoringDashboard() {
           <span className="text-base font-bold text-accent tracking-wide">{selectedReservoir.name}监测信息</span>
         </div>
         <div className="flex-1 min-h-0 overflow-hidden">
-          <MonitoringCharts reservoirData={reservoirData} currentTime={currentTime} />
+          <MonitoringCharts reservoirData={reservoirData} currentTime={currentTime} weather={weather} />
         </div>
       </div>
 

@@ -211,7 +211,7 @@ export default function Dashboard() {
 
       {/* 主内容区域 */}
       <main className="flex-1 overflow-hidden">
-        {activeDashboard === 'monitoring' && <MonitoringDashboard />}
+        {activeDashboard === 'monitoring' && <MonitoringDashboard weather={weather} />}
         {activeDashboard === 'maintenance' && <MaintenanceDashboard />}
       </main>
     </div>

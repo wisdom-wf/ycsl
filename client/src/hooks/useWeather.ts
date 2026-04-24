@@ -22,6 +22,12 @@ const weatherIconMap: Record<string, string> = {
   '53': '🌫️', 'd53': '🌫️', 'n53': '🌫️', // 霾
 };
 
+export interface HourlyRainItem {
+  hour: string;      // '00', '02', '04' ... '22'
+  rain: number;      // 该时段降雨量(mm)，预报值
+  cumulative: number; // 当天累计降雨量(mm)
+}
+
 export interface WeatherData {
   cityName: string;
   temp: string;
@@ -37,10 +43,65 @@ export interface WeatherData {
   forecastLow: string;
   // 降水概率
   rainProbability: string;
+  // 逐小时降雨（当天0-24时，每2小时一格，共12格）
+  hourlyRain: HourlyRainItem[];
   // 预警信息
   hasAlert: boolean;
   alertText: string;
   alertLevel: string; // '红色' | '橙色' | '黄色' | '蓝色' | ''
+}
+
+// 生成空的12格逐小时数据
+function emptyHourlyRain(): HourlyRainItem[] {
+  return Array.from({ length: 12 }, (_, i) => ({
+    hour: String(i * 2).padStart(2, '0'),
+    rain: 0,
+    cumulative: 0,
+  }));
+}
+
+// 解析 hour3data["1d"] 生成当天0-24时每2小时累计降雨数据
+function parseHourlyRain(text: string): HourlyRainItem[] {
+  const slots = emptyHourlyRain();
+  try {
+    // 匹配 var hour3data={...}; 注意内容可能跨行
+    const match = text.match(/var\s+hour3data\s*=\s*(\{[\s\S]*?\});/);
+    if (!match) return slots;
+    const data = JSON.parse(match[1]);
+    const today: string[] = data['1d'];
+    if (!Array.isArray(today)) return slots;
+
+    // 获取今天的日期（日），用于过滤跨天数据
+    const now = new Date();
+    const todayDay = now.getDate();
+
+    today.forEach((item: string) => {
+      const parts = item.split(',');
+      if (parts.length < 7) return;
+      // 格式: "23日11时,d01,多云,20℃,东南风,<3级,2"
+      const dayMatch = parts[0].match(/(\d+)日(\d+)时/);
+      if (!dayMatch) return;
+      const day = parseInt(dayMatch[1], 10);
+      const hour = parseInt(dayMatch[2], 10);
+      // 只取今天的数据
+      if (day !== todayDay) return;
+      const rainVal = parseFloat(parts[6]) || 0;
+      // 向下取整到偶数小时槽
+      const slotIdx = Math.floor(hour / 2);
+      if (slotIdx >= 0 && slotIdx < 12) {
+        slots[slotIdx].rain += rainVal;
+      }
+    });
+
+    // 计算累计值
+    let cum = 0;
+    slots.forEach(s => {
+      cum += s.rain;
+      s.cumulative = parseFloat(cum.toFixed(2));
+      s.rain = parseFloat(s.rain.toFixed(2));
+    });
+  } catch {}
+  return slots;
 }
 
 // 判断是否需要预警（降水量>20mm 或有灾害预警天气）
@@ -75,7 +136,6 @@ function checkAlert(rain24h: string, weatherCode: string): { hasAlert: boolean; 
 // 解析中国天气网返回的JSONP格式数据
 function parseWeatherResponse(text: string): Record<string, any> | null {
   try {
-    // 格式: var dataSK={"key":"value",...}
     const match = text.match(/var\s+dataSK\s*=\s*(\{[^}]+\})/);
     if (match) {
       return JSON.parse(match[1]);
@@ -132,9 +192,7 @@ export function useWeather() {
         let rainProb = '0%';
         if (fc && fc.f && fc.f[0]) {
           const todayForecast = fc.f[0];
-          // fm是白天湿度，可以作为降水概率参考
           const humidity = parseFloat(todayForecast.fm || '0');
-          // 根据天气类型判断降水概率
           const rainWeatherCodes = ['03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '19', '21', '22', '23', '24', '25'];
           const dayCode = todayForecast.fa || '';
           const nightCode = todayForecast.fb || '';
@@ -144,6 +202,16 @@ export function useWeather() {
             rainProb = `${Math.min(Math.round(humidity * 0.3), 30)}%`;
           }
         }
+
+        // 尝试从 weather1d 接口获取逐小时数据
+        let hourlyRain = emptyHourlyRain();
+        try {
+          const h3Res = await fetch('/weather-api/weather1d/101110304.shtml', { headers: { 'Accept': '*/*' } });
+          if (h3Res.ok) {
+            const h3Text = await h3Res.text();
+            hourlyRain = parseHourlyRain(h3Text);
+          }
+        } catch {}
         
         const alertInfo = checkAlert(sk.rain24h || '0', weatherCode);
         setWeather({
@@ -159,6 +227,7 @@ export function useWeather() {
           forecastHigh: forecast?.weatherinfo?.temp || '--',
           forecastLow: forecast?.weatherinfo?.tempn || '--',
           rainProbability: rainProb,
+          hourlyRain,
           ...alertInfo,
         });
         setError(null);
@@ -190,6 +259,7 @@ export function useWeather() {
               forecastHigh: '--',
               forecastLow: '--',
               rainProbability: '--',
+              hourlyRain: emptyHourlyRain(),
               ...alertInfo2,
             });
             setError(null);
@@ -213,6 +283,7 @@ export function useWeather() {
         forecastHigh: '--',
         forecastLow: '--',
         rainProbability: '--',
+        hourlyRain: emptyHourlyRain(),
         hasAlert: false,
         alertText: '',
         alertLevel: '',

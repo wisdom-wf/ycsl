@@ -2,74 +2,97 @@ import { useMemo } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine,
-  LineChart, Line, Area, AreaChart,
+  Area, AreaChart,
 } from 'recharts';
 import { ReservoirData } from '@shared/const';
+import { WeatherData } from '@/hooks/useWeather';
 
 interface Props {
   reservoirData: ReservoirData;
   currentTime: Date;
+  weather?: WeatherData | null;
 }
 
-export default function MonitoringCharts({ reservoirData, currentTime }: Props) {
-  // 近期降雨柱状图数据（固定随机，不随水库切换变化）
+export default function MonitoringCharts({ reservoirData, currentTime, weather }: Props) {
+
+  // ── 当天0-24时每2小时降雨量（来自weather.hourlyRain预报数据）
   const rainfallData = useMemo(() => {
-    const data = [];
-    for (let i = 0; i < 24; i++) {
-      const random = Math.random();
-      const value = random > 0.75 ? parseFloat((Math.random() * 0.8 + 0.1).toFixed(2)) : 0;
-      data.push({ time: `${String(i).padStart(2, '0')}:00`, value });
+    // 固定12个时间槽：00,02,04,...,22
+    const slots = Array.from({ length: 12 }, (_, i) => ({
+      time: `${String(i * 2).padStart(2, '0')}`,
+      value: 0,
+    }));
+    if (weather?.hourlyRain) {
+      weather.hourlyRain.forEach((item, idx) => {
+        if (idx < 12) slots[idx].value = item.rain;
+      });
     }
-    return data;
-  }, []);
+    return slots;
+  }, [weather?.hourlyRain]);
+
+  // 实测24h累计降雨量
+  const rain24h = weather?.rain24h ?? '--';
+  const rain24hNum = parseFloat(rain24h) || 0;
+
+  // 当前小时（用于在图表上标注当前时刻）
+  const currentHour = currentTime.getHours();
+  // 当前时刻对应的槽索引（向下取整到偶数）
+  const currentSlotHour = Math.floor(currentHour / 2) * 2;
 
   // ── 库水情监测：模拟近7天水位数据（在正常蓄水位附近波动）
   const waterLevelData = useMemo(() => {
     const base = reservoirData.normalWaterLevel;
-    const days = ['3/4', '3/5', '3/6', '3/7', '3/8', '3/9', '3/10'];
+    const now = new Date(currentTime);
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - 6 + i);
+      return `${d.getMonth() + 1}/${d.getDate()}`;
+    });
     return days.map((day, i) => ({
       day,
-      level: parseFloat((base - 3 + Math.sin(i * 0.8) * 2 + Math.random() * 0.5).toFixed(2)),
+      level: parseFloat((base - 3 + Math.sin(i * 0.8) * 2 + (i * 0.17) % 0.5).toFixed(2)),
     }));
   }, [reservoirData.reservoirId]);
 
-  // 库水位警戒线 = 汛限水位（汛期不得超过此值，最直接的运行警戒）
+  // 库水位警戒线 = 汛限水位
   const waterLevelWarning = reservoirData.floodWaterLevel;
-  // Y轴范围：正常蓄水位 -6m 到 校核洪水位 +1m
   const yMin = Math.floor(reservoirData.normalWaterLevel - 6);
   const yMax = Math.ceil(reservoirData.checkFloodLevel + 1);
 
-  // ── 渗流压力监测：警戒渗压水头 = 坝顶高程（校核洪水位）的 60%
-  // 大坝渗流压力警戒：测压管水头不超过坝高的60%为安全值
-  // 坝高约为 checkFloodLevel - normalWaterLevel + 基础高差(约10m)
+  // ── 渗流压力监测
   const damHeight = reservoirData.checkFloodLevel - reservoirData.normalWaterLevel + 10;
-  // 警戒渗压水头（相对坝底，单位m）
   const seepageWarningHead = parseFloat((damHeight * 0.6).toFixed(1));
-
-  // SVG坐标系参数（与原图保持一致）
-  // Y轴：高程1097m~1125m 对应 SVG y=148~18，共130px，28m
-  const elevBase = 1097;   // 坝底高程（对应 y=148）
-  const elevTop = 1125;    // 坝顶高程（对应 y=18）
+  const elevBase = 1097;
+  const elevTop = 1125;
   const svgYBottom = 148;
   const svgYTop = 18;
-  const elevRange = elevTop - elevBase; // 28m
-  const svgYRange = svgYBottom - svgYTop; // 130px
-
-  // 将高程转为SVG Y坐标
+  const elevRange = elevTop - elevBase;
+  const svgYRange = svgYBottom - svgYTop;
   const elevToSvgY = (elev: number) =>
     svgYBottom - ((elev - elevBase) / elevRange) * svgYRange;
-
-  // 警戒渗压水头对应的高程（从坝底算起）
   const warningElev = elevBase + seepageWarningHead;
   const warningY = elevToSvgY(Math.min(warningElev, elevTop - 1));
 
+  // Y轴最大值：至少10，或最大单时段降雨量的1.2倍，或警戒值的1.1倍
+  const maxRain = Math.max(...rainfallData.map(d => d.value), 1);
+  const yMaxRain = Math.max(10, Math.ceil(maxRain * 1.3), Math.ceil(50 * 1.1));
+
   return (
     <div className="h-full flex flex-col gap-3">
-      {/* ── 近期降雨过程 ── */}
+
+      {/* ── 当天降雨过程 ── */}
       <div className="flex flex-col" style={{ flex: '1 1 0', minHeight: 0 }}>
         <div className="flex items-center gap-2 mb-1.5 flex-shrink-0">
           <div className="w-1.5 h-4 bg-cyan-400 rounded-full shadow-[0_0_6px_rgba(0,212,255,0.5)]" />
-          <span className="text-sm font-bold text-accent">近期降雨过程</span>
+          <span className="text-sm font-bold text-accent">当天降雨过程</span>
+          {/* 右上角：实测24h累计值 */}
+          <div className="ml-auto flex items-center gap-1">
+            <span className="text-xs text-muted-foreground/70">实测</span>
+            <span className={`text-sm font-bold font-mono ${rain24hNum > 50 ? 'text-red-400' : rain24hNum > 10 ? 'text-yellow-400' : 'text-cyan-300'}`}>
+              {rain24h}
+            </span>
+            <span className="text-xs text-muted-foreground/70">mm</span>
+          </div>
         </div>
         <div className="bg-[#0f1d35] border border-accent/15 rounded-lg p-2" style={{ flex: '1 1 0', minHeight: '120px' }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -79,19 +102,53 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
                   <stop offset="0%" stopColor="#00d4ff" stopOpacity={0.9} />
                   <stop offset="100%" stopColor="#0066cc" stopOpacity={0.6} />
                 </linearGradient>
+                <linearGradient id="rainGradientAlert" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ff6b6b" stopOpacity={0.9} />
+                  <stop offset="100%" stopColor="#cc2200" stopOpacity={0.6} />
+                </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a3a52" opacity={0.3} />
-              <XAxis dataKey="time" stroke="#4a7a9b" style={{ fontSize: '10px' }} interval={5} tickLine={false} axisLine={{ stroke: '#1a3a52' }} />
-              <YAxis stroke="#4a7a9b" style={{ fontSize: '10px' }} domain={[0, 100]} tickLine={false} axisLine={{ stroke: '#1a3a52' }}
-                label={{ value: 'mm', angle: -90, position: 'insideLeft', offset: 12, fill: '#4a7a9b', fontSize: 11 }} />
+              <XAxis
+                dataKey="time"
+                stroke="#4a7a9b"
+                style={{ fontSize: '10px' }}
+                tickLine={false}
+                axisLine={{ stroke: '#1a3a52' }}
+                interval={1}
+                tickFormatter={(v) => v}
+              />
+              <YAxis
+                stroke="#4a7a9b"
+                style={{ fontSize: '10px' }}
+                domain={[0, yMaxRain]}
+                tickLine={false}
+                axisLine={{ stroke: '#1a3a52' }}
+                label={{ value: 'mm', angle: -90, position: 'insideLeft', offset: 12, fill: '#4a7a9b', fontSize: 11 }}
+              />
               <Tooltip
                 contentStyle={{ backgroundColor: '#0a1628', border: '1px solid rgba(0,212,255,0.3)', borderRadius: '6px', fontSize: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}
                 labelStyle={{ color: '#8ab4ff' }}
-                formatter={(value: any) => [`${(value as number).toFixed(2)} mm`, '降雨量']}
+                labelFormatter={(label) => `${label}:00 时段`}
+                formatter={(value: any) => [`${(value as number).toFixed(2)} mm`, '预报降雨']}
               />
+              {/* 50mm 警戒线 */}
               <ReferenceLine y={50} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="4 3"
-                label={{ value: '警戒 50mm', position: 'insideTopRight', fill: '#ef4444', fontSize: 11, fontWeight: 'bold' }} />
-              <Bar dataKey="value" fill="url(#rainGradient)" radius={[2, 2, 0, 0]} isAnimationActive animationDuration={800} />
+                label={{ value: '警戒 50mm', position: 'insideTopRight', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
+              {/* 当前时刻参考线 */}
+              <ReferenceLine
+                x={String(currentSlotHour).padStart(2, '0')}
+                stroke="#00ff88"
+                strokeWidth={1}
+                strokeDasharray="3 3"
+                label={{ value: '当前', position: 'insideTopLeft', fill: '#00ff88', fontSize: 9 }}
+              />
+              <Bar
+                dataKey="value"
+                fill="url(#rainGradient)"
+                radius={[2, 2, 0, 0]}
+                isAnimationActive
+                animationDuration={800}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -122,10 +179,8 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
                 labelStyle={{ color: '#8ab4ff' }}
                 formatter={(value: any) => [`${value} m`, '水位']}
               />
-              {/* 汛限水位警戒线 */}
               <ReferenceLine y={waterLevelWarning} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="4 3"
                 label={{ value: `汛限 ${waterLevelWarning}m`, position: 'insideTopRight', fill: '#ef4444', fontSize: 11, fontWeight: 'bold' }} />
-              {/* 正常蓄水位参考线 */}
               <ReferenceLine y={reservoirData.normalWaterLevel} stroke="#f59e0b" strokeWidth={1} strokeDasharray="3 4"
                 label={{ value: `正常 ${reservoirData.normalWaterLevel}m`, position: 'insideBottomRight', fill: '#f59e0b', fontSize: 11 }} />
               <Area dataKey="level" stroke="#3b82f6" strokeWidth={1.5} fill="url(#waterGradient)" dot={{ r: 2.5, fill: '#3b82f6' }} isAnimationActive animationDuration={600} />
@@ -156,8 +211,6 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
                 </feMerge>
               </filter>
             </defs>
-
-            {/* Y轴标签 - 高程 */}
             <text x="5" y="12" fontSize="9" fill="#4a7a9b">高程(m)</text>
             <text x="30" y="25" fontSize="9" fill="#4a7a9b" textAnchor="end">1,125</text>
             <text x="30" y="45" fontSize="9" fill="#4a7a9b" textAnchor="end">1,120</text>
@@ -166,46 +219,23 @@ export default function MonitoringCharts({ reservoirData, currentTime }: Props) 
             <text x="30" y="105" fontSize="9" fill="#4a7a9b" textAnchor="end">1,105</text>
             <text x="30" y="125" fontSize="9" fill="#4a7a9b" textAnchor="end">1,100</text>
             <text x="30" y="145" fontSize="9" fill="#4a7a9b" textAnchor="end">1,097</text>
-
-            {/* Y轴 */}
             <line x1="32" y1="18" x2="32" y2="148" stroke="#1a3a52" strokeWidth="0.5" />
-            {/* X轴 */}
             <line x1="32" y1="148" x2="310" y2="148" stroke="#1a3a52" strokeWidth="0.5" />
-
-            {/* 大坝梯形 */}
             <polygon points="80,148 100,82 160,22 220,22 260,82 280,148" fill="url(#trapGrad)" stroke="#ff69b4" strokeWidth="1.5" />
-
-            {/* 中轴线 - 虚线 */}
             <line x1="180" y1="22" x2="180" y2="148" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.8" />
-
-            {/* 中轴线顶部标记 */}
             <circle cx="180" cy="18" r="3" fill="#ffffff" filter="url(#glow)" />
             <text x="180" y="12" fontSize="10" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
-
-            {/* 中轴线底部标记 */}
             <circle cx="180" cy="152" r="3" fill="#ffffff" filter="url(#glow)" />
             <text x="180" y="165" fontSize="10" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
-
-            {/* 测点标记 JRX01 */}
             <rect x="147" y="38" width="6" height="6" fill="#00ff88" rx="1" filter="url(#glow)" />
             <text x="168" y="44" fontSize="10" fill="#00ff88" fontWeight="bold">JRX01</text>
-
-            {/* 测点标记 JRX02 */}
             <rect x="207" y="55" width="6" height="6" fill="#00ff88" rx="1" filter="url(#glow)" />
             <text x="228" y="61" fontSize="10" fill="#00ff88" fontWeight="bold">JRX02</text>
-
-            {/* ── 警戒渗压水头线（红色虚线，随水库切换动态变化） ── */}
-            <line
-              x1="32" y1={warningY} x2="310" y2={warningY}
-              stroke="#ef4444" strokeWidth="1.5" strokeDasharray="5,3" opacity="0.9"
-            />
-            {/* 警戒线左侧标签 */}
+            <line x1="32" y1={warningY} x2="310" y2={warningY} stroke="#ef4444" strokeWidth="1.5" strokeDasharray="5,3" opacity="0.9" />
             <rect x="33" y={warningY - 10} width="52" height="11" fill="#1a0a0a" rx="2" opacity="0.8" />
             <text x="59" y={warningY - 2} fontSize="9" fill="#ef4444" textAnchor="middle" fontWeight="bold">
               警戒 {seepageWarningHead}m
             </text>
-
-            {/* X轴标签 */}
             <text x="300" y="162" fontSize="10" fill="#4a7a9b" textAnchor="end">轴距</text>
           </svg>
         </div>
