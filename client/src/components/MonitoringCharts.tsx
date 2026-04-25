@@ -87,7 +87,7 @@ export default function MonitoringCharts({ reservoirData, currentTime, weather }
           <span className="text-sm font-bold text-accent">当天降雨过程</span>
           {/* 右上角：实测24h累计值 */}
           <div className="ml-auto flex items-center gap-1">
-            <span className="text-xs text-muted-foreground/70">实测</span>
+            <span className="text-xs text-muted-foreground/70">24小时累计</span>
             <span className={`text-sm font-bold font-mono ${rain24hNum > 50 ? 'text-red-400' : rain24hNum > 10 ? 'text-yellow-400' : 'text-cyan-300'}`}>
               {rain24h}
             </span>

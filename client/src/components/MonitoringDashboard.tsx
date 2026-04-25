@@ -81,16 +81,16 @@ export default function MonitoringDashboard({ weather }: Props) {
         {/* 顶部核心指标卡片 */}
         <div className="grid grid-cols-3 gap-4 flex-shrink-0">
           {[
-            { label: '24h降雨量', unit: 'mm', icon: Droplets, color: 'from-cyan-500/20 to-blue-600/10' },
-            { label: '库水位', unit: 'm', icon: Waves, color: 'from-blue-500/20 to-indigo-600/10' },
-            { label: '蓄水量', unit: '万m³', icon: Database, color: 'from-teal-500/20 to-cyan-600/10' },
+            { label: '24h降雨量', unit: 'mm', icon: Droplets, color: 'from-cyan-500/20 to-blue-600/10', value: weather?.rain24h ?? '--' },
+            { label: '库水位', unit: 'm', icon: Waves, color: 'from-blue-500/20 to-indigo-600/10', value: '--' },
+            { label: '蓄水量', unit: '万m³', icon: Database, color: 'from-teal-500/20 to-cyan-600/10', value: '--' },
           ].map((item, i) => (
             <div key={i} className={`bg-gradient-to-br ${item.color} border border-accent/15 rounded-xl p-4 text-center relative overflow-hidden group hover:border-accent/30 transition-all duration-300`}>
               <div className="absolute top-3 right-3 opacity-15 group-hover:opacity-25 transition-opacity">
                 <item.icon className="w-10 h-10 text-accent" />
               </div>
               <div className="text-base text-muted-foreground mb-1 tracking-wide">{item.label}</div>
-              <div className="text-5xl font-bold text-accent/60 font-mono leading-none my-1">--</div>
+              <div className="text-5xl font-bold text-accent/60 font-mono leading-none my-1">{item.value}</div>
               <div className="text-sm text-muted-foreground/60 mt-1">{item.unit}</div>
             </div>
           ))}
