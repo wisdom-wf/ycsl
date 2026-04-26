@@ -211,32 +211,23 @@ export default function MonitoringCharts({ reservoirData, currentTime, weather }
                 </feMerge>
               </filter>
             </defs>
-            <text x="5" y="12" fontSize="9" fill="#4a7a9b">高程(m)</text>
-            <text x="30" y="25" fontSize="9" fill="#4a7a9b" textAnchor="end">1,125</text>
-            <text x="30" y="45" fontSize="9" fill="#4a7a9b" textAnchor="end">1,120</text>
-            <text x="30" y="65" fontSize="9" fill="#4a7a9b" textAnchor="end">1,115</text>
-            <text x="30" y="85" fontSize="9" fill="#4a7a9b" textAnchor="end">1,110</text>
-            <text x="30" y="105" fontSize="9" fill="#4a7a9b" textAnchor="end">1,105</text>
-            <text x="30" y="125" fontSize="9" fill="#4a7a9b" textAnchor="end">1,100</text>
-            <text x="30" y="145" fontSize="9" fill="#4a7a9b" textAnchor="end">1,097</text>
-            <line x1="32" y1="18" x2="32" y2="148" stroke="#1a3a52" strokeWidth="0.5" />
-            <line x1="32" y1="148" x2="310" y2="148" stroke="#1a3a52" strokeWidth="0.5" />
-            <polygon points="80,148 100,82 160,22 220,22 260,82 280,148" fill="url(#trapGrad)" stroke="#ff69b4" strokeWidth="1.5" />
-            <line x1="180" y1="22" x2="180" y2="148" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.8" />
-            <circle cx="180" cy="18" r="3" fill="#ffffff" filter="url(#glow)" />
-            <text x="180" y="12" fontSize="10" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
-            <circle cx="180" cy="152" r="3" fill="#ffffff" filter="url(#glow)" />
-            <text x="180" y="165" fontSize="10" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
-            <rect x="147" y="38" width="6" height="6" fill="#00ff88" rx="1" filter="url(#glow)" />
-            <text x="168" y="44" fontSize="10" fill="#00ff88" fontWeight="bold">JRX01</text>
-            <rect x="207" y="55" width="6" height="6" fill="#00ff88" rx="1" filter="url(#glow)" />
-            <text x="228" y="61" fontSize="10" fill="#00ff88" fontWeight="bold">JRX02</text>
-            <line x1="32" y1={warningY} x2="310" y2={warningY} stroke="#ef4444" strokeWidth="1.5" strokeDasharray="5,3" opacity="0.9" />
-            <rect x="33" y={warningY - 10} width="52" height="11" fill="#1a0a0a" rx="2" opacity="0.8" />
-            <text x="59" y={warningY - 2} fontSize="9" fill="#ef4444" textAnchor="middle" fontWeight="bold">
-              警戒 {seepageWarningHead}m
-            </text>
-            <text x="300" y="162" fontSize="10" fill="#4a7a9b" textAnchor="end">轴距</text>
+            <text x="5" y="30" fontSize="13" fill="#4a7a9b">高程(m)</text>
+            <text x="30" y="42" fontSize="13" fill="#4a7a9b" textAnchor="end">1,125</text>
+            <text x="30" y="62" fontSize="13" fill="#4a7a9b" textAnchor="end">1,120</text>
+            <text x="30" y="82" fontSize="13" fill="#4a7a9b" textAnchor="end">1,115</text>
+            <text x="30" y="102" fontSize="13" fill="#4a7a9b" textAnchor="end">1,110</text>
+            <text x="30" y="122" fontSize="13" fill="#4a7a9b" textAnchor="end">1,105</text>
+            <text x="30" y="142" fontSize="13" fill="#4a7a9b" textAnchor="end">1,100</text>
+            <text x="30" y="162" fontSize="13" fill="#4a7a9b" textAnchor="end">1,097</text>
+            <line x1="32" y1="38" x2="32" y2="168" stroke="#1a3a52" strokeWidth="0.5" />
+            <line x1="32" y1="168" x2="310" y2="168" stroke="#1a3a52" strokeWidth="0.5" />
+            <polygon points="80,168 100,102 160,42 220,42 260,102 280,168" fill="url(#trapGrad)" stroke="#ff69b4" strokeWidth="1.5" />
+            <line x1="180" y1="42" x2="180" y2="168" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.8" />
+            <circle cx="180" cy="38" r="3" fill="#ffffff" filter="url(#glow)" />
+            <text x="180" y="30" fontSize="14" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
+            <circle cx="180" cy="172" r="3" fill="#ffffff" filter="url(#glow)" />
+            <text x="180" y="188" fontSize="14" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
+            <text x="300" y="182" fontSize="14" fill="#4a7a9b" textAnchor="end">轴距</text>
           </svg>
         </div>
       </div>

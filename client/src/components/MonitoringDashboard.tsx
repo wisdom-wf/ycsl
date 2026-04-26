@@ -103,7 +103,7 @@ export default function MonitoringDashboard({ weather }: Props) {
       </div>
 
       {/* ── 右列：图表（固定宽度，flex布局不滚动） ── */}
-      <div className="w-[22%] border-l border-accent/10 bg-gradient-to-b from-[#0a1628] to-[#0d1a30] flex flex-col overflow-hidden px-4 py-4">
+      <div className="w-[30%] border-l border-accent/10 bg-gradient-to-b from-[#0a1628] to-[#0d1a30] flex flex-col overflow-hidden px-4 py-4">
         <div className="flex items-center gap-2 mb-3 flex-shrink-0">
           <div className="w-1.5 h-5 bg-accent rounded-full shadow-[0_0_8px_rgba(0,212,255,0.6)]" />
           <span className="text-base font-bold text-accent tracking-wide">{selectedReservoir.name}监测信息</span>
