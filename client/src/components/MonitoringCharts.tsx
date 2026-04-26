@@ -194,10 +194,10 @@ export default function MonitoringCharts({ reservoirData, currentTime, weather }
         <div className="flex items-center gap-2 mb-1.5 flex-shrink-0">
           <div className="w-1.5 h-4 bg-cyan-400 rounded-full shadow-[0_0_6px_rgba(0,212,255,0.5)]" />
           <span className="text-sm font-bold text-accent">渗流压力监测</span>
-          <span className="ml-auto text-xs text-red-400/70 font-mono">警戒水头 {seepageWarningHead}m</span>
+
         </div>
-        <div className="bg-[#0f1d35] border border-accent/15 rounded-lg p-2" style={{ flex: '1 1 0', minHeight: '140px' }}>
-          <svg viewBox="0 0 320 180" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+        <div className="bg-[#0f1d35] border border-accent/15 rounded-lg p-2" style={{ flex: '1 1 0', minHeight: '160px' }}>
+          <svg viewBox="0 0 320 200" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
             <defs>
               <linearGradient id="trapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#b8a44c" stopOpacity="0.7" />
@@ -227,7 +227,7 @@ export default function MonitoringCharts({ reservoirData, currentTime, weather }
             <text x="180" y="30" fontSize="14" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
             <circle cx="180" cy="172" r="3" fill="#ffffff" filter="url(#glow)" />
             <text x="180" y="188" fontSize="14" fill="#ffffff" textAnchor="middle" fontWeight="bold">中轴线</text>
-            <text x="300" y="182" fontSize="14" fill="#4a7a9b" textAnchor="end">轴距</text>
+            <text x="300" y="195" fontSize="14" fill="#4a7a9b" textAnchor="end">轴距</text>
           </svg>
         </div>
       </div>
