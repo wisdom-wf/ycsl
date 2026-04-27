@@ -130,7 +130,7 @@ export const RESERVOIR_DATA: Record<string, ReservoirData> = {
   r1: {
     reservoirId: 'r1',
     rainfall24h: 0.5,
-    waterLevel: 45.2,
+    waterLevel: 0,
     storageVolume: 850,
     inflow: 0.8,
     outflow: 0.6,
@@ -143,7 +143,7 @@ export const RESERVOIR_DATA: Record<string, ReservoirData> = {
   r2: {
     reservoirId: 'r2',
     rainfall24h: 1.2,
-    waterLevel: 48.5,
+    waterLevel: 0,
     storageVolume: 920,
     inflow: 1.2,
     outflow: 0.9,
@@ -156,7 +156,7 @@ export const RESERVOIR_DATA: Record<string, ReservoirData> = {
   r3: {
     reservoirId: 'r3',
     rainfall24h: 0.8,
-    waterLevel: 42.1,
+    waterLevel: 0,
     storageVolume: 680,
     inflow: 0.5,
     outflow: 0.4,
@@ -169,7 +169,7 @@ export const RESERVOIR_DATA: Record<string, ReservoirData> = {
   r4: {
     reservoirId: 'r4',
     rainfall24h: 1.8,
-    waterLevel: 51.3,
+    waterLevel: 0,
     storageVolume: 1050,
     inflow: 1.5,
     outflow: 1.2,

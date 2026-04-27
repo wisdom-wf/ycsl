@@ -39,9 +39,9 @@ export default function MonitoringCharts({ reservoirData, currentTime, weather }
   // 当前时刻对应的槽索引（向下取整到偶数）
   const currentSlotHour = Math.floor(currentHour / 2) * 2;
 
-  // ── 库水情监测：模拟近7天水位数据（在正常蓄水位附近波动）
+  // ── 库水情监测：模拟近7天水位数据（全部置0）
   const waterLevelData = useMemo(() => {
-    const base = reservoirData.normalWaterLevel;
+    const base = 0;
     const now = new Date(currentTime);
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(now);
@@ -50,7 +50,7 @@ export default function MonitoringCharts({ reservoirData, currentTime, weather }
     });
     return days.map((day, i) => ({
       day,
-      level: parseFloat((base - 3 + Math.sin(i * 0.8) * 2 + (i * 0.17) % 0.5).toFixed(2)),
+      level: parseFloat((base + Math.sin(i * 0.8) * 0.1 + (i * 0.05) % 0.1).toFixed(2)),
     }));
   }, [reservoirData.reservoirId]);
 
