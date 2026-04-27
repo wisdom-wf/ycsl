@@ -5,7 +5,7 @@ import MapVisualization from './MapVisualization';
 import WorkOrderModal from './WorkOrderModal';
 
 export default function MaintenanceDashboard() {
-  const [selectedReservoirId, setSelectedReservoirId] = useState('r1');
+  const [selectedReservoirId, setSelectedReservoirId] = useState('r2');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showWorkOrderModal, setShowWorkOrderModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());

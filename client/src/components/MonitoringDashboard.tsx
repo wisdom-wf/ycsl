@@ -10,7 +10,7 @@ interface Props {
   weather?: WeatherData | null;
 }
 export default function MonitoringDashboard({ weather }: Props) {
-  const [selectedReservoirId, setSelectedReservoirId] = useState('r1');
+  const [selectedReservoirId, setSelectedReservoirId] = useState('r2');
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
